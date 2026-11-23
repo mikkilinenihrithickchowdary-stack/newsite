@@ -338,13 +338,18 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--line2) !
   <sc-if value="{{ isFinance }}" hint-placeholder-val="{{ false }}">
     <div data-screen-label="Finance" style="display:flex;flex-direction:column;gap:20px">
       <div style="display:flex;flex-direction:column;gap:4px"><span style="color:var(--fg2)">Q4 2026</span><h1 style="margin:0;font-size:clamp(26px,3vw,34px);font-weight:600;letter-spacing:-0.035em">Finance &amp; pipeline</h1></div>
+      <div style="padding:18px;border-radius:18px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:600">{{ goal.label }}</span><span style="font-size:12px;color:var(--fg2)">{{ goal.pctLabel }}</span></div>
+        <div style="height:10px;border-radius:999px;background:var(--track);overflow:hidden"><div style="height:100%;border-radius:999px;background:{{ goal.barColor }};width:{{ goal.pct }}"></div></div>
+        <span style="font-size:12px;color:var(--fg2)">{{ goal.detail }}</span>
+      </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr));gap:10px">
         <sc-for list="{{ finStats }}" as="k" hint-placeholder-count="4">
           <div style="padding:16px;border-radius:18px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:var(--fg2)">{{ k.label }}</span><span style="font-size:24px;font-weight:600;letter-spacing:-0.03em;color:{{ k.color }}">{{ k.value }}</span></div>
         </sc-for>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px">
-        <span style="font-weight:600">Pipeline</span>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">Pipeline</span><button type="button" onClick="{{ openNewLead }}" style="padding:6px 14px;border-radius:999px;border:none;background:var(--solid);color:var(--solidFg);cursor:pointer;font-size:13px" style-hover="background:#FF7A45;color:#141016">New lead</button></div>
         <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;align-items:flex-start">
           <sc-for list="{{ pipeCols }}" as="col" hint-placeholder-count="4">
             <div style="flex:1 0 190px;padding:10px;border-radius:16px;background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column;gap:8px">
@@ -353,6 +358,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--line2) !
                 <div style="padding:11px;border-radius:12px;background:var(--card2);border:1px solid var(--line);display:flex;flex-direction:column;gap:6px">
                   <span style="display:flex;justify-content:space-between;gap:6px"><span style="font-weight:500">{{ l.name }}</span><span style="font-family:'Geist Mono',monospace;font-size:12px">{{ l.valueFmt }}</span></span>
                   <span style="font-size:12px;color:var(--fg2)">{{ l.service }}</span>
+                  <sc-if value="{{ l.hasSource }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:var(--fg3)">via {{ l.source }}</span></sc-if>
                   <button onClick="{{ l.adv }}" style="align-self:flex-start;padding:4px 11px;border-radius:999px;border:none;background:{{ l.btnBg }};color:{{ l.btnFg }};cursor:pointer;font-size:12px">{{ l.btn }}</button>
                 </div>
               </sc-for>
@@ -451,6 +457,14 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--line2) !
           <input name="email" type="email" placeholder="Email" style="padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card)">
           <select name="service" style="padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card)"><sc-for list="{{ serviceOpts }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select>
           <label style="display:flex;gap:10px;align-items:center;font-size:13px;color:var(--fg2)"><input type="checkbox" name="onboard" defaultChecked="{{ true }}">Start the onboarding template</label>
+        </div>
+      </sc-if>
+      <sc-if value="{{ mLeadForm }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <input name="name" required="" placeholder="Name or company" style="padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card)">
+          <select name="service" style="padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card)"><sc-for list="{{ serviceOpts }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select>
+          <input name="value" type="number" min="0" step="1" required="" placeholder="Deal value (EUR)" style="padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card)">
+          <select name="source" style="padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card)"><sc-for list="{{ sourceOpts }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select>
         </div>
       </sc-if>
       <button type="submit" style="align-self:flex-end;padding:10px 20px;border-radius:999px;border:none;background:var(--solid);color:var(--solidFg);font-weight:500;cursor:pointer" style-hover="background:#FF7A45;color:#141016">{{ modalCta }}</button>
@@ -649,6 +663,8 @@ function seed() {
 const WALL = { Recognition: 'https://hrithick.xyz/assets/art/recognition-1774.webp', People: 'https://hrithick.xyz/assets/art/proximity-1122.webp', Details: 'https://hrithick.xyz/assets/art/details-1448.webp', Litchi: 'https://framerusercontent.com/images/vAEMpzHcA47iSeQq3N9IIEDqMkE.jpg' };
 const STAGES = ['Enquiry', 'Call', 'Proposal', 'Won'];
 const W = { Enquiry: 0.1, Call: 0.3, Proposal: 0.6 };
+const SOURCE_OPTS = ['Referral', 'Outreach', 'Inbound', 'Content', 'Event', 'Other'];
+const MONTHLY_GOAL = 50000;
 
 class Component extends DCLogic {
   constructor(p) {
@@ -798,13 +814,21 @@ class Component extends DCLogic {
 
     const openLeads = d.leads.filter(l => W[l.stage] != null);
     const weighted = openLeads.reduce((a, l) => a + l.value * W[l.stage], 0);
+    const monthPrefix = TODAY.slice(0, 7);
+    const monthCollected = invs.filter(i => i.st === 'Paid' && (i.due || '').slice(0, 7) === monthPrefix).reduce((a, i) => a + i.amount, 0);
+    const goalPct = Math.min(100, Math.round(monthCollected / MONTHLY_GOAL * 100));
+    const goal = {
+      label: `This month vs €${MONTHLY_GOAL.toLocaleString('en-GB')} goal`, pctLabel: goalPct + '%', pct: goalPct + '%',
+      barColor: goalPct >= 100 ? P.green : goalPct >= 60 ? P.amber : P.red,
+      detail: `${eur(monthCollected)} collected · ${eur(Math.max(0, MONTHLY_GOAL - monthCollected))} to go · ${eur(weighted)} weighted in pipeline`,
+    };
     const finStats = [
       { label: 'Collected Q4', value: eur(invs.filter(i => i.st === 'Paid' && i.due >= '2026-10-01').reduce((a, i) => a + i.amount, 0)), color: 'var(--fg)' },
       { label: 'Outstanding', value: eur(outstanding), color: 'var(--fg)' },
       { label: 'Overdue', value: eur(invs.filter(i => i.st === 'Overdue').reduce((a, i) => a + i.amount, 0)), color: invs.some(i => i.st === 'Overdue') ? P.red : 'var(--fg)' },
       { label: 'Weighted pipeline', value: eur(weighted), color: 'var(--fg)' },
     ];
-    const pipeCols = STAGES.map(st => { const ls = d.leads.filter(l => l.stage === st); return { name: st, total: eurK(ls.reduce((a, l) => a + l.value, 0)), leads: ls.map(l => ({ ...l, valueFmt: eurK(l.value),
+    const pipeCols = STAGES.map(st => { const ls = d.leads.filter(l => l.stage === st); return { name: st, total: eurK(ls.reduce((a, l) => a + l.value, 0)), leads: ls.map(l => ({ ...l, valueFmt: eurK(l.value), hasSource: !!l.source,
       btn: st === 'Won' ? 'Open client' : st === 'Proposal' ? 'Mark won' : 'Advance →', btnBg: st === 'Proposal' ? '#FF7A45' : 'var(--solid)', btnFg: st === 'Proposal' ? '#141016' : 'var(--solidFg)',
       adv: () => {
         if (st === 'Won') { if (l.clientId) this.setState({ view: 'client', clientId: l.clientId }); return; }
@@ -861,6 +885,10 @@ class Component extends DCLogic {
         this.save(x => { cid = 'c' + (++x.seq); x.clients.push({ id: cid, name: g('name'), company: g('company') || '—', email: g('email'), service: g('service'), color: CLIENT_COLORS[x.clients.length % CLIENT_COLORS.length] }); if (f.get('onboard')) x.projects.push(inst(tplById('ob'), cid, TODAY, 0, 'p' + (++x.seq), 'Onboarding')); return x; }, `${g('name')} added.`);
         setTimeout(() => this.setState({ view: 'client', clientId: cid }), 0);
       }
+      if (m === 'lead') {
+        this.save(x => { x.leads.push({ id: 'l' + (++x.seq), name: g('name'), service: g('service'), value: Number(g('value')) || 0, stage: 'Enquiry', source: g('source') }); return x; }, `${g('name')} added to the pipeline.`);
+        this.setState({ view: 'finance' });
+      }
       this.setState({ modal: null });
     };
 
@@ -878,13 +906,14 @@ class Component extends DCLogic {
       homeStats, weekTasks, portfolio, activity, goMyTasks: () => this.setState({ view: 'mytasks' }), myGroups,
       clientCards, clientCount: d.clients.length, activeCount: active.length, cl, goClients: () => this.setState({ view: 'clients', task: null }),
       pj, tl, viewTabs, isList: s.pview === 'list', isBoard: s.pview === 'board', isTimeline: s.pview === 'timeline',
-      tplCards, tp, finStats, pipeCols, invRows,
+      tplCards, tp, finStats, pipeCols, invRows, goal,
       hasTask, tk, sheet, closeTask: () => this.setState({ task: null }), memberOpts: Object.entries(MEM).map(([id, v]) => ({ id, name: v.name })),
       openUseTpl: () => this.setState({ modal: 'usetpl', mTpl: 'pi', mClient: d.clients[0] && d.clients[0].id }), openNewClient: () => this.setState({ modal: 'client' }),
+      openNewLead: () => this.setState({ modal: 'lead' }),
       hasModal: !!m, closeModal: () => this.setState({ modal: null }), stop: e => e.stopPropagation(), submitModal,
-      modalTitle: m === 'client' ? 'New client' : 'New project from template', modalCta: m === 'client' ? 'Add client' : 'Create project',
-      mUseTpl: m === 'usetpl', mClientForm: m === 'client', mTpl: s.mTpl || 'pi', mClient: s.mClient || '', mStart: TODAY,
-      tplOpts: TEMPLATES.map(t => ({ id: t.id, name: t.name })), clientOpts: d.clients.map(c => ({ id: c.id, name: c.name })), serviceOpts: SERVICES,
+      modalTitle: m === 'client' ? 'New client' : m === 'lead' ? 'New lead' : 'New project from template', modalCta: m === 'client' ? 'Add client' : m === 'lead' ? 'Add lead' : 'Create project',
+      mUseTpl: m === 'usetpl', mClientForm: m === 'client', mLeadForm: m === 'lead', mTpl: s.mTpl || 'pi', mClient: s.mClient || '', mStart: TODAY,
+      tplOpts: TEMPLATES.map(t => ({ id: t.id, name: t.name })), clientOpts: d.clients.map(c => ({ id: c.id, name: c.name })), serviceOpts: SERVICES, sourceOpts: SOURCE_OPTS,
       hasToast: !!s.toast, toast: s.toast,
       signOut: () => { sb.auth.signOut().then(() => location.reload()); },
     };
