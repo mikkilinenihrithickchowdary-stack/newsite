@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -67,7 +68,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--line2) !
       </sc-for>
     </div>
     <div style="display:flex;align-items:center;gap:10px;padding:0 4px"><span style="width:30px;height:30px;flex:none;border-radius:50%;background:#FF7A45;display:grid;place-items:center;font-size:11px;font-weight:600;color:#141016">HC</span><sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span style="display:flex;flex-direction:column;line-height:1.2"><span>Hrithick Chowdary</span><span style="font-size:11px;color:var(--fg3)">Creative director</span></span></sc-if></div>
-    <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><div style="display:flex;justify-content:space-between;font-size:12px;padding:0 4px"><a href="Hrithick v4.dc.html" style="color:var(--fg2)">Public site ↗</a><button onClick="{{ resetData }}" style="padding:0;border:none;background:none;cursor:pointer;color:var(--fg2)">Reset data</button></div></sc-if>
+    <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><div style="display:flex;justify-content:space-between;font-size:12px;padding:0 4px"><a href="/" style="color:var(--fg2)">Public site ↗</a><button onClick="{{ signOut }}" style="padding:0;border:none;background:none;cursor:pointer;color:var(--fg2)">Sign out</button></div></sc-if>
   </div>
 </aside>
 </sc-if>
@@ -470,12 +471,70 @@ const diff = (a, b) => Math.round((Date.parse(b + 'T00:00:00Z') - Date.parse(a +
 const dfmt = d => d ? new Date(d + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }) : '';
 const eur = n => '€' + Math.round(n).toLocaleString('en-GB');
 const eurK = n => n >= 1000 ? '€' + (n / 1000).toFixed(n % 1000 ? 1 : 0) + 'K' : eur(n);
-const MEM = {
-  hc: { name: 'Hrithick Chowdary', ini: 'HC', color: '#FF7A45', first: 'Hrithick' },
-  mi: { name: 'Mira Shah · Design', ini: 'MS', color: '#A79BFF', first: 'Mira' },
-  ar: { name: 'Arjun Rao · Production', ini: 'AR', color: '#5FD89F', first: 'Arjun' },
-  le: { name: 'Leah Kim · Strategy', ini: 'LK', color: '#F2C14E', first: 'Leah' },
-};
+let MEM = {};
+const UNKNOWN_MEMBER = { name: 'Unassigned', ini: '?', color: '#888', first: 'Unassigned' };
+function defaultMember() { const vs = Object.values(MEM); return vs[0] || UNKNOWN_MEMBER; }
+
+const SB_URL = 'https://puozickscvklidwjfvon.supabase.co';
+const SB_KEY = 'sb_publishable_OTokK2tq9dDsouQsA_NcnQ_FkeEXo7V';
+const sb = window.supabase.createClient(SB_URL, SB_KEY);
+const EMPTY_DATA = { clients: [], projects: [], invoices: [], leads: [], notes: {}, seq: 100 };
+
+function buildGate() {
+  let wrap = document.getElementById('authGate');
+  if (wrap) return wrap;
+  wrap = document.createElement('div');
+  wrap.id = 'authGate';
+  wrap.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#141016;font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:#F5F2EE';
+  wrap.innerHTML = '<form id="authForm" style="width:min(340px,90vw);display:flex;flex-direction:column;gap:12px;padding:28px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1)">'
+    + '<div style="font-weight:600;font-size:16px">Studio OS</div>'
+    + '<div id="authMsg" style="font-size:13px;color:rgba(245,242,238,0.6);min-height:16px"></div>'
+    + '<input id="authEmail" type="email" required placeholder="Email" autocomplete="username" style="padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.06);color:#F5F2EE">'
+    + '<input id="authPass" type="password" required minlength="6" placeholder="Password" autocomplete="current-password" style="padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.06);color:#F5F2EE">'
+    + '<button type="submit" style="padding:10px 12px;border:none;border-radius:999px;background:#F5F2EE;color:#141016;font-weight:600;cursor:pointer">Continue</button>'
+    + '</form>';
+  document.body.appendChild(wrap);
+  wrap.querySelector('#authForm').addEventListener('submit', onAuthSubmit);
+  return wrap;
+}
+function setAuthMsg(t) { const el = document.getElementById('authMsg'); if (el) el.textContent = t || ''; }
+async function onAuthSubmit(e) {
+  e.preventDefault();
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPass').value;
+  setAuthMsg('Signing in…');
+  const { error: signInErr } = await sb.auth.signInWithPassword({ email, password });
+  if (signInErr) {
+    setAuthMsg('Creating account…');
+    const { data: signUpData, error: signUpErr } = await sb.auth.signUp({ email, password });
+    if (signUpErr) { setAuthMsg(signUpErr.message); return; }
+    if (!signUpData.session) { setAuthMsg('Check your email to confirm, then sign in here.'); return; }
+  }
+  await afterSignIn();
+}
+async function afterSignIn() {
+  setAuthMsg('Loading your workspace…');
+  const { data: { user } } = await sb.auth.getUser();
+  const name = (user.email || 'You').split('@')[0];
+  const initials = name.slice(0, 2).toUpperCase();
+  const { data: teamId, error: bootErr } = await sb.rpc('bootstrap_team', { p_team_name: name + "'s Studio", p_member_name: name, p_initials: initials });
+  if (bootErr) { setAuthMsg(bootErr.message); return; }
+  const { data: workspace, error: loadErr } = await sb.rpc('get_workspace', { p_team_id: teamId });
+  if (loadErr) { setAuthMsg(loadErr.message); return; }
+  MEM = Object.fromEntries((workspace.members || []).map(m => [m.id, { name: m.name, ini: m.initials, color: m.color, first: m.name.split(' ')[0] }]));
+  window.__BOOT = { teamId, email: user.email };
+  const gate = document.getElementById('authGate');
+  if (gate) gate.remove();
+  const inst = window.__appInstance;
+  const notes = {};
+  (workspace.clients || []).forEach(c => { if (c.notes) notes[c.id] = c.notes; });
+  if (inst) inst.setState({ data: { clients: workspace.clients || [], projects: workspace.projects || [], invoices: workspace.invoices || [], leads: workspace.leads || [], notes, seq: 100 } });
+}
+async function initAuth() {
+  buildGate();
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) { await afterSignIn(); }
+}
 const PAL = {
   dark: { green: '#5FD89F', amber: '#F2C14E', red: '#FF7A6B', blue: '#A9B4FF', mute: 'rgba(245,242,238,0.55)', soft: '#D9D3CB' },
   light: { green: '#1E8A5A', amber: '#9A6500', red: '#C43D2C', blue: '#4650C4', mute: 'rgba(23,20,26,0.5)', soft: '#4A4550' },
@@ -579,11 +638,13 @@ const W = { Enquiry: 0.1, Call: 0.3, Proposal: 0.6 };
 class Component extends DCLogic {
   constructor(p) {
     super(p);
-    let data = null, theme = null;
-    try { data = JSON.parse(localStorage.getItem(KEY)); theme = localStorage.getItem(KEY + '.theme'); } catch (e) {}
-    this.state = { data: data || seed(), theme: theme || p.defaultTheme || 'dark', w: typeof window !== 'undefined' ? window.innerWidth : 1280, view: 'home', clientId: 'c1', projectId: 'p1', pview: 'list', task: null, collapsed: {}, tpl: 'pi', modal: null, toast: null };
+    let theme = null;
+    try { theme = localStorage.getItem(KEY + '.theme'); } catch (e) {}
+    this.state = { data: EMPTY_DATA, theme: theme || p.defaultTheme || 'dark', w: typeof window !== 'undefined' ? window.innerWidth : 1280, view: 'home', clientId: null, projectId: null, pview: 'list', task: null, collapsed: {}, tpl: 'pi', modal: null, toast: null };
   }
   componentDidMount() {
+    window.__appInstance = this;
+    if (!window.__authStarted) { window.__authStarted = true; initAuth(); }
     this.onR = () => { const w = document.documentElement.clientWidth || window.innerWidth; if (w && w !== this.state.w) this.setState({ w }); };
     this.onK = e => { if (e.key === 'Escape') this.setState({ task: null, modal: null }); };
     window.addEventListener('resize', this.onR); window.addEventListener('keydown', this.onK);
@@ -592,7 +653,15 @@ class Component extends DCLogic {
   }
   componentWillUnmount() { clearTimeout(this.tt); clearTimeout(this.t2); cancelAnimationFrame(this.raf); this.ro && this.ro.disconnect(); window.removeEventListener('resize', this.onR); window.removeEventListener('keydown', this.onK); }
   save(fn, toast) {
-    this.setState(s => { const data = fn(JSON.parse(JSON.stringify(s.data))) || s.data; try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {} return { data }; });
+    this.setState(s => {
+      const data = fn(JSON.parse(JSON.stringify(s.data))) || s.data;
+      const boot = window.__BOOT;
+      if (boot) {
+        const payload = { ...data, clients: (data.clients || []).map(c => ({ ...c, notes: (data.notes && data.notes[c.id]) || c.notes || '' })) };
+        sb.rpc('replace_workspace', { p_team_id: boot.teamId, p_data: payload }).then(({ error }) => { if (error) console.error('save failed', error); });
+      }
+      return { data };
+    });
     if (toast) this.flash(toast);
   }
   flash(t) { this.setState({ toast: t }); clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: null }), 3000); }
@@ -623,7 +692,7 @@ class Component extends DCLogic {
     const dueColor = t => t.done ? 'var(--fg3)' : t.due < TODAY ? P.red : t.due === TODAY ? P.amber : 'var(--fg2)';
     const dueLabel = t => t.due === TODAY ? 'Today' : t.due === addDays(TODAY, 1) ? 'Tomorrow' : dfmt(t.due);
     const taskVals = (p, t) => {
-      const c = client(p.clientId), m = MEM[t.assignee] || MEM.hc, subDone = t.subtasks.filter(x => x.done).length;
+      const c = client(p.clientId), m = MEM[t.assignee] || defaultMember(), subDone = t.subtasks.filter(x => x.done).length;
       return { ...t, open: openTask(p.id, t.id), toggle: toggleTask(p.id, t), ring: t.done ? P.green : 'var(--fg3)', fill: t.done ? P.green : 'transparent', tick: t.done ? '✓' : '',
         fg: t.done ? 'var(--fg3)' : 'var(--fg)', deco: t.done ? 'line-through' : 'none', op: t.done ? 0.55 : 1, bg: s.task && s.task.t === t.id ? 'var(--sel)' : 'transparent',
         av: m, dueFmt: dueLabel(t), dueColor: dueColor(t), prColor: PR[t.priority], where: `${p.name} · ${c.name}`, color: c.color,
@@ -654,7 +723,7 @@ class Component extends DCLogic {
     const weekTasks = mine.slice(0, 7).map(({ p, t }) => taskVals(p, t));
     const portfolio = d.projects.map(p => { const i = info(p), c = client(p.clientId); return { name: p.name, client: c.name, color: c.color, ...i, dueFmt: dfmt(p.due), open: openProject(p.id) }; }).sort((a, b) => (a.status === 'Complete') - (b.status === 'Complete'));
     const activity = allTasks.flatMap(({ p, t }) => t.comments.map(c => ({ c, p, t }))).sort((a, b) => a.c.at < b.c.at ? 1 : -1).slice(0, 5)
-      .map(({ c, p, t }) => ({ av: MEM[c.by] || MEM.hc, task: t.title, text: c.text, when: c.at === TODAY ? 'Today' : dfmt(c.at), open: () => this.setState({ view: 'project', projectId: p.id, task: { p: p.id, t: t.id } }) }));
+      .map(({ c, p, t }) => ({ av: MEM[c.by] || defaultMember(), task: t.title, text: c.text, when: c.at === TODAY ? 'Today' : dfmt(c.at), open: () => this.setState({ view: 'project', projectId: p.id, task: { p: p.id, t: t.id } }) }));
 
     const groups = [['Overdue', x => x.t.due < TODAY, P.red], ['Today', x => x.t.due === TODAY, P.amber], ['Next 7 days', x => x.t.due > TODAY && x.t.due <= addDays(TODAY, 7), 'var(--fg)'], ['Later', x => x.t.due > addDays(TODAY, 7), 'var(--fg2)']];
     const myGroups = groups.map(([name, f, color]) => { const ts = mine.filter(f); return { name, color, count: ts.length, tasks: ts.map(({ p, t }) => taskVals(p, t)) }; }).filter(g => g.count);
@@ -678,7 +747,7 @@ class Component extends DCLogic {
     let pj = {}, tl = { ticks: [], rows: [], showToday: false, today: '0%' };
     if (pr) {
       const i = info(pr), pc = client(pr.clientId);
-      const members = [...new Set(pr.tasks.map(t => t.assignee))].map(k => MEM[k] || MEM.hc);
+      const members = [...new Set(pr.tasks.map(t => t.assignee))].map(k => MEM[k] || defaultMember());
       pj = { ...i, name: pr.name, client: pc.name, color: pc.color, template: tplById(pr.templateId).name, range: `${dfmt(pr.start)} – ${dfmt(pr.due)}`, members, openClient: openClient(pc.id),
         flag: () => this.save(x => { const y = x.projects.find(z => z.id === pr.id); y.risk = !y.risk; return x; }, pr.risk ? 'Risk flag cleared.' : 'Project flagged at risk.'),
         sections: pr.sections.map(sec => {
@@ -710,7 +779,7 @@ class Component extends DCLogic {
     const tTotal = tpl.sections.reduce((a, x) => a + x[1].length, 0);
     let gi = 0;
     const tp = { name: tpl.name, desc: tpl.desc, meta: `${tpl.weeks} weeks · ${tpl.sections.length} sections · ${tTotal} tasks`, use: () => this.setState({ modal: 'usetpl', mTpl: tpl.id, mClient: d.clients[0] && d.clients[0].id }),
-      sections: tpl.sections.map(([name, ts]) => ({ name, tasks: ts.map(raw => { const [title, who] = raw.split('|'); gi++; return { title, who: (MEM[who || 'hc']).first, day: Math.round(gi / tTotal * tpl.weeks * 7) }; }) })) };
+      sections: tpl.sections.map(([name, ts]) => ({ name, tasks: ts.map(raw => { const [title, who] = raw.split('|'); gi++; return { title, who: (MEM[who] || defaultMember()).first, day: Math.round(gi / tTotal * tpl.weeks * 7) }; }) })) };
 
     const openLeads = d.leads.filter(l => W[l.stage] != null);
     const weighted = openLeads.reduce((a, l) => a + l.value * W[l.stage], 0);
@@ -756,7 +825,7 @@ class Component extends DCLogic {
           subLabel: t.subtasks.length ? `${t.subtasks.filter(x => x.done).length}/${t.subtasks.length}` : '',
           subs: t.subtasks.map((x, k) => ({ t: x.t, fg: x.done ? 'var(--fg3)' : 'var(--fg)', deco: x.done ? 'line-through' : 'none', ring: x.done ? P.green : 'var(--fg3)', fill: x.done ? P.green : 'transparent', tick: x.done ? '✓' : '', toggle: () => up(y => { y.subtasks[k].done = !y.subtasks[k].done; }) })),
           addSub: this.onEnter(v => up(x => { x.subtasks.push({ t: v, done: false }); })),
-          comments: t.comments.map(c => ({ ...c, av: MEM[c.by] || MEM.hc, when: c.at === TODAY ? 'Today' : dfmt(c.at) })),
+          comments: t.comments.map(c => ({ ...c, av: MEM[c.by] || defaultMember(), when: c.at === TODAY ? 'Today' : dfmt(c.at) })),
           addComment: this.onEnter(v => up(x => { x.comments.push({ by: 'hc', text: v, at: TODAY }); })),
           del: () => { this.save(x => { const y = x.projects.find(z => z.id === tp2.id); y.tasks = y.tasks.filter(z => z.id !== t.id); return x; }, 'Task deleted.'); this.setState({ task: null }); } };
       }
@@ -802,7 +871,7 @@ class Component extends DCLogic {
       mUseTpl: m === 'usetpl', mClientForm: m === 'client', mTpl: s.mTpl || 'pi', mClient: s.mClient || '', mStart: TODAY,
       tplOpts: TEMPLATES.map(t => ({ id: t.id, name: t.name })), clientOpts: d.clients.map(c => ({ id: c.id, name: c.name })), serviceOpts: SERVICES,
       hasToast: !!s.toast, toast: s.toast,
-      resetData: () => { try { localStorage.removeItem(KEY); } catch (e) {} this.setState({ data: seed(), view: 'home', task: null }); this.flash('Demo data reset.'); },
+      signOut: () => { sb.auth.signOut().then(() => location.reload()); },
     };
   }
 }
