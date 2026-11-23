@@ -472,13 +472,27 @@ const dfmt = d => d ? new Date(d + 'T00:00:00Z').toLocaleDateString('en-GB', { d
 const eur = n => '€' + Math.round(n).toLocaleString('en-GB');
 const eurK = n => n >= 1000 ? '€' + (n / 1000).toFixed(n % 1000 ? 1 : 0) + 'K' : eur(n);
 let MEM = {};
-const UNKNOWN_MEMBER = { name: 'Unassigned', ini: '?', color: '#888', first: 'Unassigned' };
+const UNKNOWN_MEMBER = { id: null, name: 'Unassigned', ini: '?', color: '#888', first: 'Unassigned' };
 function defaultMember() { const vs = Object.values(MEM); return vs[0] || UNKNOWN_MEMBER; }
 
 const SB_URL = 'https://puozickscvklidwjfvon.supabase.co';
 const SB_KEY = 'sb_publishable_OTokK2tq9dDsouQsA_NcnQ_FkeEXo7V';
 const sb = window.supabase.createClient(SB_URL, SB_KEY);
 const EMPTY_DATA = { clients: [], projects: [], invoices: [], leads: [], notes: {}, seq: 100 };
+// Flip to true once you're ready to require sign-in on the dashboard.
+const GATED = false;
+const DEFAULT_TEAM_ID = '00000000-0000-0000-0000-000000000001';
+async function loadUngated() {
+  const { data: workspace, error } = await sb.rpc('get_workspace', { p_team_id: DEFAULT_TEAM_ID });
+  if (error) { console.error('workspace load failed', error); return; }
+  if (!workspace) { console.error('workspace is null, aborting'); return; }
+  MEM = Object.fromEntries((workspace.members || []).map(m => [m.id, { name: m.name, ini: m.initials, color: m.color, first: m.name.split(' ')[0] }]));
+  window.__BOOT = { teamId: DEFAULT_TEAM_ID, email: null };
+  const notes = {};
+  (workspace.clients || []).forEach(c => { if (c.notes) notes[c.id] = c.notes; });
+  const inst = window.__appInstance;
+  if (inst) inst.setState({ data: { clients: workspace.clients || [], projects: workspace.projects || [], invoices: workspace.invoices || [], leads: workspace.leads || [], notes, seq: 100 } });
+}
 
 function buildGate() {
   let wrap = document.getElementById('authGate');
@@ -531,6 +545,7 @@ async function afterSignIn() {
   if (inst) inst.setState({ data: { clients: workspace.clients || [], projects: workspace.projects || [], invoices: workspace.invoices || [], leads: workspace.leads || [], notes, seq: 100 } });
 }
 async function initAuth() {
+  if (!GATED) { await loadUngated(); return; }
   buildGate();
   const { data: { session } } = await sb.auth.getSession();
   if (session) { await afterSignIn(); }
@@ -587,7 +602,7 @@ function inst(tpl, clientId, start, frac, id, name, risk) {
   const tasks = []; let gi = 0;
   tpl.sections.forEach((s, si) => s[1].forEach(raw => {
     const [title, who] = raw.split('|');
-    tasks.push({ id: id + 't' + gi, sectionId: id + 's' + si, title, assignee: who || 'hc', due: addDays(start, Math.round((gi + 1) / total * tpl.weeks * 7)), done: gi < Math.floor(total * frac), priority: ['High', 'Medium', 'Low'][(gi + si) % 3], desc: '', subtasks: [], comments: [] });
+    tasks.push({ id: id + 't' + gi, sectionId: id + 's' + si, title, assignee: defaultMember().id || '', due: addDays(start, Math.round((gi + 1) / total * tpl.weeks * 7)), done: gi < Math.floor(total * frac), priority: ['High', 'Medium', 'Low'][(gi + si) % 3], desc: '', subtasks: [], comments: [] });
     gi++;
   }));
   return { id, clientId, name: name || tpl.name.split(' · ').pop(), templateId: tpl.id, start, due: addDays(start, tpl.weeks * 7), risk: !!risk, sections, tasks };
