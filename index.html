@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -185,7 +186,7 @@ input,textarea,button{font:inherit}
     </sc-if>
     <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:14px;align-items:flex-start">
-        <p style="margin:0;font-size:clamp(20px,1.8vw,26px);line-height:1.25;letter-spacing:-0.02em">Thank you, {{ sentName }}. Your enquiry is ready in your mail app.</p>
+        <p style="margin:0;font-size:clamp(20px,1.8vw,26px);line-height:1.25;letter-spacing:-0.02em">Thank you, {{ sentName }}. I've got your enquiry and will reply soon.</p>
         <button onClick="{{ reset }}" style="padding:0;border:none;background:none;border-bottom:1px solid currentColor;cursor:pointer">Send another</button>
       </div>
     </sc-if>
@@ -222,6 +223,9 @@ input,textarea,button{font:inherit}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;galleryCols&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[2,3,4,5],&quot;default&quot;:4,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;spots&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:5,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Availability&quot;}}">
+const sb = window.supabase.createClient('https://puozickscvklidwjfvon.supabase.co', 'sb_publishable_OTokK2tq9dDsouQsA_NcnQ_FkeEXo7V');
+const DEFAULT_TEAM_ID = '00000000-0000-0000-0000-000000000001';
+
 class Component extends DCLogic {
   state = { svc: 0, faq: -1, filter: 'All', chip: null, sent: false, sentName: '', now: Date.now() };
   componentDidMount() { this.t = setInterval(() => this.setState({ now: Date.now() }), 20000); }
@@ -274,8 +278,10 @@ class Component extends DCLogic {
     const submit = e => {
       e.preventDefault();
       const f = new FormData(e.target), name = f.get('name') || '';
-      const body = `Name: ${name}\nEmail: ${f.get('email')}\nLink: ${f.get('link') || '-'}\nService: ${s.chip || '-'}\n\n${f.get('message')}`;
-      try { window.open(`mailto:collab@hrithick.xyz?subject=${encodeURIComponent('Enquiry: ' + (s.chip || 'New project'))}&body=${encodeURIComponent(body)}`, '_blank'); } catch (err) {}
+      sb.from('enquiries').insert({
+        team_id: DEFAULT_TEAM_ID, name: String(name), email: f.get('email'), link: f.get('link') || '',
+        service: s.chip || '', message: f.get('message'),
+      }).then(({ error }) => { if (error) console.error('enquiry save failed', error); });
       this.setState({ sent: true, sentName: String(name).split(' ')[0] });
     };
 

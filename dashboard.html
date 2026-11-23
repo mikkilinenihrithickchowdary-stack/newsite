@@ -96,6 +96,19 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--line2) !
           </button>
         </sc-for>
       </div>
+      <sc-if value="{{ hasEnquiries }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:16px;border-radius:20px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;gap:2px">
+          <span style="font-weight:600;padding:0 4px 8px">New enquiries from the site</span>
+          <sc-for list="{{ enquiryCards }}" as="eq" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:6px;padding:11px;border-top:1px solid var(--line)">
+              <div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:500">{{ eq.name }}</span><span style="font-size:12px;color:var(--fg3)">{{ eq.when }}</span></div>
+              <span style="font-size:12px;color:var(--fg2)">{{ eq.email }} · {{ eq.service }}</span>
+              <span style="font-size:13px;color:var(--fg2)">{{ eq.message }}</span>
+              <div style="display:flex;gap:8px;flex-wrap:wrap"><a href="{{ eq.bookUrl }}" target="_blank" style="padding:5px 12px;border-radius:999px;background:#FF7A45;color:#141016;cursor:pointer;font-size:12px;font-weight:500">Open Calendly link ↗</a><button onClick="{{ eq.convert }}" style="padding:5px 12px;border-radius:999px;border:none;background:var(--solid);color:var(--solidFg);cursor:pointer;font-size:12px">Convert to lead</button><button onClick="{{ eq.dismiss }}" style="padding:5px 12px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--fg2);cursor:pointer;font-size:12px">Dismiss</button></div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px">
         <div style="padding:16px;border-radius:20px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;gap:2px;min-width:0">
           <div style="display:flex;justify-content:space-between;padding:0 4px 8px"><span style="font-weight:600">My week</span><button onClick="{{ goMyTasks }}" style="border:none;background:none;cursor:pointer;color:var(--fg2);font-size:13px">All tasks →</button></div>
@@ -496,6 +509,13 @@ const EMPTY_DATA = { clients: [], projects: [], invoices: [], leads: [], notes: 
 // Flip to true once you're ready to require sign-in on the dashboard.
 const GATED = false;
 const DEFAULT_TEAM_ID = '00000000-0000-0000-0000-000000000001';
+async function loadEnquiries() {
+  const { data, error } = await sb.from('enquiries').select('*').eq('team_id', DEFAULT_TEAM_ID).eq('converted', false).order('created_at', { ascending: false });
+  if (error) { console.error('enquiries load failed', error); return; }
+  const inst = window.__appInstance;
+  if (inst) inst.setState({ enquiries: data || [] });
+}
+
 async function loadUngated() {
   const { data: workspace, error } = await sb.rpc('get_workspace', { p_team_id: DEFAULT_TEAM_ID });
   if (error) { console.error('workspace load failed', error); return; }
@@ -506,6 +526,7 @@ async function loadUngated() {
   (workspace.clients || []).forEach(c => { if (c.notes) notes[c.id] = c.notes; });
   const inst = window.__appInstance;
   if (inst) inst.setState({ data: { clients: workspace.clients || [], projects: workspace.projects || [], invoices: workspace.invoices || [], leads: workspace.leads || [], notes, seq: 100 } });
+  loadEnquiries();
 }
 
 function buildGate() {
@@ -671,7 +692,7 @@ class Component extends DCLogic {
     super(p);
     let theme = null;
     try { theme = localStorage.getItem(KEY + '.theme'); } catch (e) {}
-    this.state = { data: EMPTY_DATA, theme: theme || p.defaultTheme || 'dark', w: typeof window !== 'undefined' ? window.innerWidth : 1280, view: 'home', clientId: null, projectId: null, pview: 'list', task: null, collapsed: {}, tpl: 'pi', modal: null, toast: null };
+    this.state = { data: EMPTY_DATA, enquiries: [], theme: theme || p.defaultTheme || 'dark', w: typeof window !== 'undefined' ? window.innerWidth : 1280, view: 'home', clientId: null, projectId: null, pview: 'list', task: null, collapsed: {}, tpl: 'pi', modal: null, toast: null };
   }
   componentDidMount() {
     window.__appInstance = this;
@@ -751,6 +772,16 @@ class Component extends DCLogic {
       { label: 'Active projects', value: String(active.length), color: 'var(--fg)', go: () => this.setState({ view: 'clients' }) },
       { label: 'Outstanding', value: eur(outstanding), color: 'var(--fg)', go: () => this.setState({ view: 'finance' }) },
     ];
+    const enquiryCards = (s.enquiries || []).map(eq => ({
+      name: eq.name, email: eq.email || '—', service: eq.service || 'General', message: eq.message || '',
+      when: eq.created_at ? dfmt(eq.created_at.slice(0, 10)) : '',
+      bookUrl: `https://calendly.com/mikkilinenihrithickchowdary/30min?name=${encodeURIComponent(eq.name || '')}&email=${encodeURIComponent(eq.email || '')}`,
+      convert: () => {
+        this.save(x => { x.leads.push({ id: 'l' + (++x.seq), name: eq.name, service: eq.service || SERVICES[0], value: 0, stage: 'Enquiry', source: 'Inbound' }); return x; }, `${eq.name} added to the pipeline.`);
+        sb.from('enquiries').update({ converted: true }).eq('id', eq.id).then(() => loadEnquiries());
+      },
+      dismiss: () => { sb.from('enquiries').update({ converted: true }).eq('id', eq.id).then(() => loadEnquiries()); },
+    }));
     const weekTasks = mine.slice(0, 7).map(({ p, t }) => taskVals(p, t));
     const portfolio = d.projects.map(p => { const i = info(p), c = client(p.clientId); return { name: p.name, client: c.name, color: c.color, ...i, dueFmt: dfmt(p.due), open: openProject(p.id) }; }).sort((a, b) => (a.status === 'Complete') - (b.status === 'Complete'));
     const activity = allTasks.flatMap(({ p, t }) => t.comments.map(c => ({ c, p, t }))).sort((a, b) => a.c.at < b.c.at ? 1 : -1).slice(0, 5)
@@ -904,6 +935,7 @@ class Component extends DCLogic {
       nav, sideProjects,
       isHome: s.view === 'home', isMyTasks: s.view === 'mytasks', isClients: s.view === 'clients', isClient: s.view === 'client', isProject: s.view === 'project', isTemplates: s.view === 'templates', isFinance: s.view === 'finance',
       homeStats, weekTasks, portfolio, activity, goMyTasks: () => this.setState({ view: 'mytasks' }), myGroups,
+      hasEnquiries: enquiryCards.length > 0, enquiryCards,
       clientCards, clientCount: d.clients.length, activeCount: active.length, cl, goClients: () => this.setState({ view: 'clients', task: null }),
       pj, tl, viewTabs, isList: s.pview === 'list', isBoard: s.pview === 'board', isTimeline: s.pview === 'timeline',
       tplCards, tp, finStats, pipeCols, invRows, goal,
