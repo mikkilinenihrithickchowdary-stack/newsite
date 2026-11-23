@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+html{scroll-behavior:smooth}
+body{margin:0;background:#F7F6F3;color:#141414;-webkit-font-smoothing:antialiased}
+a{color:#141414;text-decoration:none}a:hover{color:#E8501C}
+input,textarea,button{font:inherit}
+::selection{background:#141414;color:#F7F6F3}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.25}}
+</style>
+</helmet>
+<div style="font-family:'Geist',sans-serif;font-size:14px;line-height:1.5;background:#F7F6F3;color:#141414;min-height:100vh">
+
+<header style="position:sticky;top:0;z-index:20;background:rgba(247,246,243,0.92);backdrop-filter:blur(10px)">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px 24px;align-items:center;padding:16px clamp(16px,2.4vw,32px)">
+    <a href="#top" style="font-weight:600;letter-spacing:-0.01em">Hrithick.xyz</a>
+    <nav style="display:flex;gap:4px 20px;flex-wrap:wrap;color:#6B6862">
+      <a href="#work" style="color:#141414" style-hover="color:#E8501C">Work</a>
+      <a href="#practice" style="color:#141414" style-hover="color:#E8501C">Practice</a>
+      <a href="#about" style="color:#141414" style-hover="color:#E8501C">Info</a>
+      <a href="#enquiry" style="color:#141414" style-hover="color:#E8501C">Enquiry</a>
+    </nav>
+    <a href="#enquiry" style="justify-self:end;display:flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;background:#141414;color:#F7F6F3;font-size:13px" style-hover="background:#E8501C;color:#141414">{{ dot }}{{ spotsLabel }}</a>
+  </div>
+</header>
+
+<section id="top" data-screen-label="01 Intro" style="padding:clamp(56px,9vw,140px) clamp(16px,2.4vw,32px) clamp(40px,5vw,72px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:32px">
+  <div style="display:flex;flex-direction:column;gap:6px;color:#6B6862">
+    <span style="color:#141414;font-weight:500">Hrithick Chowdary</span>
+    <span>Brand architecture &amp; creative direction</span>
+    <span>For founders and established experts</span>
+  </div>
+  <div style="grid-column:span 2;display:flex;flex-direction:column;gap:28px">
+    <h1 style="margin:0;max-width:17ch;font-weight:500;font-size:clamp(32px,4.4vw,64px);line-height:1.02;letter-spacing:-0.035em;text-wrap:balance">Turning established names into worlds people want to step into.</h1>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a href="#enquiry" style="padding:11px 18px;border-radius:999px;background:#E8501C;color:#141414;font-weight:500" style-hover="background:#141414;color:#F7F6F3">Start a project</a>
+      <a href="#practice" style="padding:11px 18px;border-radius:999px;border:1px solid #D9D6CF;color:#141414" style-hover="border-color:#141414">Ways to work together</a>
+    </div>
+  </div>
+</section>
+
+<section id="work" data-screen-label="02 Work" style="padding:0 clamp(8px,1vw,14px) clamp(64px,8vw,120px)">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;padding:0 clamp(8px,1.4vw,18px) 14px;color:#6B6862">
+    <span>Selected work, 2021 to now</span>
+    <div style="display:flex;gap:4px 16px;flex-wrap:wrap">
+      <sc-for list="{{ filters }}" as="f" hint-placeholder-count="4">
+        <button onClick="{{ f.onClick }}" style="padding:0;border:none;background:none;cursor:pointer;color:{{ f.fg }}">{{ f.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+  <div style="columns:{{ colsCss }};column-gap:8px">
+    <sc-for list="{{ works }}" as="w" hint-placeholder-count="10">
+      <a href="{{ w.href }}" target="_blank" style="display:block;break-inside:avoid;margin-bottom:8px;position:relative;overflow:hidden;border-radius:4px;background:{{ w.bg }};color:#141414" style-hover="color:#141414">
+        <img src="{{ w.src }}" alt="{{ w.title }}" loading="lazy" style="width:100%;display:block;aspect-ratio:{{ w.ratio }};object-fit:cover;transition:transform .8s cubic-bezier(.2,.7,.2,1)" style-hover="transform:scale(1.03)">
+        <span style="position:absolute;left:8px;bottom:8px;display:flex;gap:8px;padding:4px 8px;border-radius:3px;background:rgba(247,246,243,0.94);font-size:12px"><span style="font-weight:500">{{ w.title }}</span><span style="color:#6B6862">{{ w.tag }}</span></span>
+      </a>
+    </sc-for>
+  </div>
+  <p style="margin:6px clamp(8px,1.4vw,18px) 0;font-size:12px;color:#8A867E">Paintings are AI-generated editorial studies, not client projects.</p>
+</section>
+
+<section data-screen-label="03 Case" style="padding:clamp(64px,8vw,120px) clamp(16px,2.4vw,32px);border-top:1px solid #E4E1DA;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:32px">
+  <div style="display:flex;flex-direction:column;gap:6px;color:#6B6862">
+    <span style="color:#141414;font-weight:500">Case study</span>
+    <span>Litchi Siciliani</span>
+    <span>Client: Alankrta Naturals, 2023</span>
+  </div>
+  <div style="grid-column:span 2;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:32px;align-items:start">
+    <div style="aspect-ratio:4/5;overflow:hidden;border-radius:4px;background:#C9302C"><img src="https://framerusercontent.com/images/vAEMpzHcA47iSeQq3N9IIEDqMkE.jpg" alt="Litchi Siciliani campaign" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+    <div style="display:flex;flex-direction:column;gap:24px">
+      <p style="margin:0;font-size:clamp(20px,1.8vw,26px);line-height:1.25;letter-spacing:-0.02em;text-wrap:pretty">A brand world built end to end: who it's for, the story it tells, and the "main characters only" campaign that made people want in.</p>
+      <div style="border-top:1px solid #E4E1DA">
+        <sc-for list="{{ caseSteps }}" as="c" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:32px 130px minmax(0,1fr);gap:12px;padding:12px 0;border-bottom:1px solid #E4E1DA">
+            <span style="font-family:'Geist Mono',monospace;font-size:12px;color:#8A867E">{{ c.n }}</span>
+            <span style="font-weight:500">{{ c.t }}</span>
+            <span style="color:#6B6862">{{ c.d }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <a href="https://hrithick.com/works/reckless-protagonistas" target="_blank" style="align-self:flex-start;border-bottom:1px solid currentColor">See the full case ↗</a>
+    </div>
+  </div>
+</section>
+
+<section id="practice" data-screen-label="04 Practice" style="padding:clamp(64px,8vw,120px) clamp(16px,2.4vw,32px);border-top:1px solid #E4E1DA;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:32px">
+  <div style="display:flex;flex-direction:column;gap:6px;color:#6B6862">
+    <span style="color:#141414;font-weight:500">Practice</span>
+    <span>Four ways to work together</span>
+    <span>Not sure? Enquire and I'll recommend one.</span>
+  </div>
+  <div style="grid-column:span 2;border-top:1px solid #141414">
+    <sc-for list="{{ services }}" as="s" hint-placeholder-count="4">
+      <div style="border-bottom:1px solid #E4E1DA">
+        <button onClick="{{ s.toggle }}" style="width:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:6px 20px;align-items:baseline;padding:18px 0;border:none;background:none;cursor:pointer;text-align:left;color:#141414">
+          <span style="font-size:clamp(18px,1.6vw,22px);font-weight:500;letter-spacing:-0.02em">{{ s.name }}</span>
+          <span style="color:#6B6862">{{ s.line }}</span>
+          <span style="display:flex;justify-content:space-between;gap:12px"><span>{{ s.price }}</span><span style="color:#8A867E">{{ s.sign }}</span></span>
+        </button>
+        <sc-if value="{{ s.open }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:20px;padding:0 0 24px">
+            <p style="margin:0;color:#3E3C38;text-wrap:pretty">{{ s.body }}</p>
+            <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px;color:#3E3C38">
+              <sc-for list="{{ s.points }}" as="p"><li>— {{ p }}</li></sc-for>
+            </ul>
+            <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start;color:#6B6862">
+              <span>{{ s.forWho }}</span>
+              <a href="#enquiry" onClick="{{ s.pick }}" style="border-bottom:1px solid currentColor;color:#141414">Enquire about this ↗</a>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<section id="about" data-screen-label="05 Info" style="padding:clamp(64px,8vw,120px) clamp(16px,2.4vw,32px);border-top:1px solid #E4E1DA;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:32px">
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <span style="font-weight:500">Info</span>
+    <div style="max-width:240px;aspect-ratio:4/5;overflow:hidden;border-radius:4px;background:#141414"><img src="https://hrithick.xyz/assets/art/portrait-bw-1120.webp" alt="Portrait of Hrithick Chowdary" style="width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(1)"></div>
+  </div>
+  <div style="grid-column:span 2;display:flex;flex-direction:column;gap:24px;max-width:760px">
+    <p style="margin:0;font-size:clamp(20px,1.8vw,26px);line-height:1.25;letter-spacing:-0.02em;text-wrap:pretty">From napkin sketch to an international brand. I'm the department in between.</p>
+    <p style="margin:0;color:#3E3C38;font-size:15px;text-wrap:pretty">I'm Hrithick Chowdary, a creative director and brand strategist. My experience spans company building, operations, hospitality, education and creative direction. I start with a question of taste, then follow it into the practical decisions needed to deliver it.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:20px;padding-top:16px;border-top:1px solid #E4E1DA;color:#6B6862">
+      <div style="display:flex;flex-direction:column;gap:2px"><span style="color:#141414;font-weight:500">Brands built</span><span>Litchi Siciliani</span><span>Alankrta Naturals</span><a href="https://houseofsvolta.com" target="_blank" style="color:#6B6862">House of Svolta ↗</a></div>
+      <div style="display:flex;flex-direction:column;gap:2px"><span style="color:#141414;font-weight:500">Disciplines</span><span>Positioning</span><span>Identity &amp; art direction</span><span>Systems &amp; teams</span></div>
+      <div style="display:flex;flex-direction:column;gap:2px"><span style="color:#141414;font-weight:500">Engagement</span><span>8 to 10 weeks</span><span>Direct with Hrithick</span><span>Limited clients</span></div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="06 FAQ" style="padding:clamp(64px,8vw,120px) clamp(16px,2.4vw,32px);border-top:1px solid #E4E1DA;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:32px">
+  <div style="display:flex;flex-direction:column;gap:6px;color:#6B6862">
+    <span style="color:#141414;font-weight:500">Questions</span>
+    <a href="mailto:collab@hrithick.xyz" style="color:#6B6862">collab@hrithick.xyz</a>
+  </div>
+  <div style="grid-column:span 2;border-top:1px solid #141414">
+    <sc-for list="{{ faqs }}" as="q" hint-placeholder-count="6">
+      <div style="border-bottom:1px solid #E4E1DA">
+        <button onClick="{{ q.onClick }}" style="width:100%;display:flex;justify-content:space-between;gap:20px;padding:14px 0;border:none;background:none;cursor:pointer;text-align:left;color:#141414;font-size:15px">{{ q.q }}<span style="color:#8A867E">{{ q.sign }}</span></button>
+        <sc-if value="{{ q.open }}" hint-placeholder-val="{{ false }}">
+          <p style="margin:0 0 18px;max-width:640px;color:#3E3C38">{{ q.a }}</p>
+        </sc-if>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<section id="enquiry" data-screen-label="07 Enquiry" style="padding:clamp(64px,8vw,120px) clamp(16px,2.4vw,32px);border-top:1px solid #E4E1DA;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:32px">
+  <div style="display:flex;flex-direction:column;gap:6px;color:#6B6862">
+    <span style="color:#141414;font-weight:500">Project enquiry</span>
+    <span>Reviewed for fit, scope and availability.</span>
+    <a href="https://calendly.com/mikkilinenihrithickchowdary/30min" target="_blank" style="color:#141414;border-bottom:1px solid currentColor;align-self:flex-start;margin-top:8px">Or book a 30-min call ↗</a>
+  </div>
+  <div style="grid-column:span 2;max-width:760px">
+    <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+      <form onSubmit="{{ submit }}" style="display:flex;flex-direction:column;gap:22px">
+        <p style="margin:0;font-size:clamp(20px,1.8vw,26px);line-height:1.25;letter-spacing:-0.02em">What would you like your name to make possible?</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ chips }}" as="c" hint-placeholder-count="5">
+            <button type="button" onClick="{{ c.onClick }}" style="padding:7px 13px;border-radius:999px;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};cursor:pointer;font-size:13px">{{ c.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:22px">
+          <input name="name" required="" placeholder="Name" style="padding:10px 0;border:none;border-bottom:1px solid #CFCBC3;background:transparent;font-size:15px;outline:none">
+          <input name="email" type="email" required="" placeholder="Email" style="padding:10px 0;border:none;border-bottom:1px solid #CFCBC3;background:transparent;font-size:15px;outline:none">
+        </div>
+        <input name="link" placeholder="Website or social link" style="padding:10px 0;border:none;border-bottom:1px solid #CFCBC3;background:transparent;font-size:15px;outline:none">
+        <textarea name="message" required="" rows="4" placeholder="Where you are now, and the ambition ahead" style="padding:10px 0;border:none;border-bottom:1px solid #CFCBC3;background:transparent;font-size:15px;outline:none;resize:vertical"></textarea>
+        <button type="submit" style="align-self:flex-start;padding:11px 20px;border-radius:999px;border:none;background:#141414;color:#F7F6F3;cursor:pointer;font-size:14px" style-hover="background:#E8501C;color:#141414">Send enquiry ↗</button>
+      </form>
+    </sc-if>
+    <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:14px;align-items:flex-start">
+        <p style="margin:0;font-size:clamp(20px,1.8vw,26px);line-height:1.25;letter-spacing:-0.02em">Thank you, {{ sentName }}. Your enquiry is ready in your mail app.</p>
+        <button onClick="{{ reset }}" style="padding:0;border:none;background:none;border-bottom:1px solid currentColor;cursor:pointer">Send another</button>
+      </div>
+    </sc-if>
+  </div>
+</section>
+
+<footer style="padding:40px clamp(16px,2.4vw,32px) 24px;border-top:1px solid #E4E1DA;display:flex;flex-direction:column;gap:56px">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:28px;color:#6B6862">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <span style="color:#141414;font-weight:500">Local time</span>
+      <sc-for list="{{ clocks }}" as="k" hint-placeholder-count="2">
+        <span style="display:flex;justify-content:space-between;gap:16px;max-width:200px"><span>{{ k.city }}</span><span style="font-family:'Geist Mono',monospace;font-size:13px;color:#141414">{{ k.time }}</span></span>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <span style="color:#141414;font-weight:500">Other links</span>
+      <a href="https://www.instagram.com/hrithick.xyz" target="_blank" style="color:#6B6862">Instagram</a>
+      <a href="https://www.linkedin.com/in/hrithick-chowdary-m-81a51719a/" target="_blank" style="color:#6B6862">LinkedIn</a>
+      <a href="https://www.behance.net/hrithicchowdar1" target="_blank" style="color:#6B6862">Behance</a>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <span style="color:#141414;font-weight:500">Contact</span>
+      <a href="mailto:collab@hrithick.xyz" style="color:#6B6862">collab@hrithick.xyz</a>
+      <a href="https://houseofsvolta.com" target="_blank" style="color:#6B6862">House of Svolta ↗</a>
+    </div>
+    <a href="#enquiry" style="justify-self:start;align-self:start;display:flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;background:#141414;color:#F7F6F3;font-size:13px" style-hover="background:#E8501C;color:#141414">{{ dot }}{{ spotsLabel }}</a>
+  </div>
+  <div style="font-weight:600;font-size:clamp(56px,15.5vw,280px);line-height:0.8;letter-spacing:-0.065em;margin-left:-0.04em">Hrithick</div>
+  <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:#8A867E">
+    <span>All rights reserved © 2026. Hrithick</span>
+    <div style="display:flex;gap:16px"><a href="https://hrithick.xyz/privacy/" style="color:#8A867E">Privacy</a><a href="https://hrithick.xyz/terms/" style="color:#8A867E">Terms</a><a href="#top" style="color:#8A867E">Back to top ↑</a></div>
+  </div>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;galleryCols&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[2,3,4,5],&quot;default&quot;:4,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;spots&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:5,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Availability&quot;}}">
+class Component extends DCLogic {
+  state = { svc: 0, faq: -1, filter: 'All', chip: null, sent: false, sentName: '', now: Date.now() };
+  componentDidMount() { this.t = setInterval(() => this.setState({ now: Date.now() }), 20000); }
+  componentWillUnmount() { clearInterval(this.t); }
+  renderVals() {
+    const h = React.createElement, s = this.state;
+    const spots = this.props.spots ?? 2;
+    const cols = this.props.galleryCols ?? 4;
+    const dot = h('span', { style: { width: 7, height: 7, borderRadius: '50%', background: '#E8501C', display: 'inline-block', animation: 'pulse 1.6s ease-in-out infinite' } });
+
+    const all = [
+      { title: 'Litchi Siciliani', tag: 'Brand world', cat: 'Brand', src: 'https://framerusercontent.com/images/vAEMpzHcA47iSeQq3N9IIEDqMkE.jpg', href: 'https://hrithick.com/works/reckless-protagonistas', bg: '#C9302C', ratio: '4/5' },
+      { title: 'The People', tag: 'Editorial', cat: 'Editorial', src: 'https://hrithick.xyz/assets/art/proximity-1122.webp', href: 'https://hrithick.xyz/', bg: '#3B2F2A', ratio: '4/5' },
+      { title: 'Retro Future', tag: 'Animation', cat: 'Art', src: 'https://framerusercontent.com/images/KEhrRBgsRXgF4Fad6AObNWMPVmg.gif', href: 'https://hrithick.com/works/retro-future', bg: '#1E3A8A', ratio: '1/1' },
+      { title: 'Signature', tag: 'Art direction', cat: 'Art', src: 'https://framerusercontent.com/images/YNwd8QT1GqE7WqHQjukS0rX4afg.png?width=900', href: 'https://hrithick.com/', bg: '#8E14A0', ratio: '3/4' },
+      { title: 'Forbidden Fire', tag: 'Artwork', cat: 'Art', src: 'https://framerusercontent.com/images/6Ahird8o56olj3xlHrs0LWzhw.png?width=1200', href: 'https://hrithick.com/works/ascii', bg: '#E9A90C', ratio: '1/1' },
+      { title: 'A Reputation Becomes a World', tag: 'Editorial', cat: 'Editorial', src: 'https://hrithick.xyz/assets/art/recognition-1774.webp', href: 'https://hrithick.xyz/', bg: '#3B2F2A', ratio: '16/10' },
+      { title: '3D Statue', tag: '3D', cat: 'Art', src: 'https://framerusercontent.com/images/dpDCGP3kGAjsxiiz3JxagFrs2U.png?width=600', href: 'https://www.behance.net/hrithicchowdar1', bg: '#141414', ratio: '4/5' },
+      { title: 'Open Hearted', tag: 'Procreate', cat: 'Art', src: 'https://framerusercontent.com/images/Xm3SfnhlxoxONf0NuYFGppDJ1dE.gif', href: 'https://hrithick.com/works/procreate', bg: '#FF4F17', ratio: '1/1' },
+      { title: 'The Details', tag: 'Editorial', cat: 'Editorial', src: 'https://hrithick.xyz/assets/art/details-1448.webp', href: 'https://hrithick.xyz/', bg: '#3B2F2A', ratio: '4/3' },
+      { title: '3D Face Studies', tag: '3D', cat: 'Art', src: 'https://framerusercontent.com/images/yhwAkIhyAvVvyGsEzUzqJ6oT0w.png?width=1200', href: 'https://www.behance.net/hrithicchowdar1', bg: '#1E40AF', ratio: '4/5' },
+      { title: 'Sculpted Form', tag: '3D', cat: 'Art', src: 'https://framerusercontent.com/images/OjmvPHtRg1OAPqUOxPqiQnOwHn8.jpg?width=1000', href: 'https://www.behance.net/hrithicchowdar1', bg: '#141414', ratio: '3/4' },
+    ];
+    const works = s.filter === 'All' ? all : all.filter(w => w.cat === s.filter);
+    const filters = ['All', 'Brand', 'Art', 'Editorial'].map(l => ({ label: l, fg: s.filter === l ? '#141414' : '#8A867E', onClick: () => this.setState({ filter: l }) }));
+
+    const caseSteps = [['01', 'Positioning', 'Who it is for and the desire it answers'], ['02', 'Narrative', 'Origin, myth and voice'], ['03', 'Identity', 'Visual language and sensory character'], ['04', 'Art direction', 'Casting, styling, the campaign shoot'], ['05', 'Communication', 'Consistent across every channel']].map(([n, t, d]) => ({ n, t, d }));
+
+    const svcData = [
+      { name: 'Personal Institution', line: 'Positioning, identity and public presence built around your expertise.', price: 'From €5,000', forWho: 'For founders, experts, coaches and creators', body: 'For people whose work has substance but whose public presence has yet to express it. Architecture builds the foundation; Systems builds the team behind an existing brand.', points: ['Positioning and brand DNA', 'Aesthetic and sensory direction', 'Presence and performance coaching', 'Editorial launch slate', 'Workflows and governance'] },
+      { name: 'Concept to Distribution', line: 'The product, its story, the experience and the team taking it to market.', price: 'On enquiry', forWho: 'For luxury, consumer, lifestyle and wellness brands', body: 'Positioning luxury founders as category creators: brands people love talking about, not just premium ones.', points: ['Myth modelling', 'Desirability engineering', 'Six Pillars of Luxury', 'DNA positioning'] },
+      { name: 'Ghost Founder', line: 'Turn an established audience into a venture.', price: 'On enquiry', forWho: 'For creators and public figures', body: 'We shape the offer, the brand world, and the people and operations needed to run it.', points: ['Venture concept and offer', 'Brand world from your audience', 'Team and operating structure'] },
+      { name: 'Art & Creative Direction', line: 'Concept and expression through imagery, type, material and composition.', price: 'On enquiry', forWho: 'For a campaign, film, project or brand', body: 'A conceptual universe carried consistently across film, product, spatial and digital.', points: ['Narrative system', 'Visual language', 'Moodboards and future-state visuals', 'Guidelines for teams and vendors'] },
+    ];
+    const services = svcData.map((d, i) => { const open = s.svc === i; return { ...d, open, sign: open ? '−' : '+', toggle: () => this.setState({ svc: open ? -1 : i }), pick: () => this.setState({ chip: d.name }) }; });
+
+    const faqs = [
+      ['Which engagement fits my ambition?', 'Personal Institution is for your name and reputation. Concept to Distribution is for a product or existing brand. Ghost Founder connects an audience to a venture. Art & Creative Direction is a specific creative assignment.'],
+      ['What is the investment?', 'Architecture is €5,000 over 8 to 10 weeks. Systems begins with a $1,000 study, then $2,500 to $3,000 a month, three-month minimum. Other engagements are scoped on enquiry.'],
+      ['Will I work directly with Hrithick?', 'Yes. Scope, cadence and any specialist contribution are defined in your agreement.'],
+      ['Are filming and production included?', 'Direction and production are distinct. Filming, photography and editing are included only when explicitly scoped.'],
+      ['How do we begin?', 'Send an enquiry with your ambition and current position. I review it for fit and reply with a next step.'],
+    ].map(([q, a], i) => ({ q, a, open: s.faq === i, sign: s.faq === i ? '−' : '+', onClick: () => this.setState({ faq: s.faq === i ? -1 : i }) }));
+
+    const chips = ['Personal Institution', 'Concept to Distribution', 'Ghost Founder', 'Art & Creative Direction', 'Not sure yet'].map(l => { const on = s.chip === l; return { label: l, bg: on ? '#141414' : 'transparent', fg: on ? '#F7F6F3' : '#141414', bd: on ? '#141414' : '#CFCBC3', onClick: () => this.setState({ chip: l }) }; });
+
+    const fmt = tz => { try { return new Date(s.now).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: tz }); } catch (e) { return '--:--'; } };
+    const clocks = [{ city: 'India', time: fmt('Asia/Kolkata') }, { city: 'Europe', time: fmt('Europe/Rome') }];
+
+    const submit = e => {
+      e.preventDefault();
+      const f = new FormData(e.target), name = f.get('name') || '';
+      const body = `Name: ${name}\nEmail: ${f.get('email')}\nLink: ${f.get('link') || '-'}\nService: ${s.chip || '-'}\n\n${f.get('message')}`;
+      try { window.open(`mailto:collab@hrithick.xyz?subject=${encodeURIComponent('Enquiry: ' + (s.chip || 'New project'))}&body=${encodeURIComponent(body)}`, '_blank'); } catch (err) {}
+      this.setState({ sent: true, sentName: String(name).split(' ')[0] });
+    };
+
+    return {
+      dot, works, filters, caseSteps, services, faqs, chips, clocks, submit,
+      colsCss: `${cols} 220px`,
+      spotsLabel: `${spots} ${spots === 1 ? 'spot' : 'spots'} left this quarter`,
+      notSent: !s.sent, sent: s.sent, sentName: s.sentName,
+      reset: () => this.setState({ sent: false, chip: null }),
+    };
+  }
+}
+</script>
+</body>
+</html>

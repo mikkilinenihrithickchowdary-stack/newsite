@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--fg:#F5F2EE;--fg2:rgba(245,242,238,0.66);--fg3:rgba(245,242,238,0.46);--glass:rgba(30,26,32,0.5);--card:rgba(255,255,255,0.06);--card2:rgba(255,255,255,0.1);--hover:rgba(255,255,255,0.08);--sel:rgba(255,255,255,0.13);--line:rgba(255,255,255,0.09);--line2:rgba(255,255,255,0.16);--track:rgba(255,255,255,0.13);--solid:#F5F2EE;--solidFg:#141016;--sheet:rgba(34,29,36,0.78);--tint:rgba(14,11,16,0.5);--hi:rgba(255,255,255,0.14);--shadow:rgba(0,0,0,0.38);--base:#141016}
+[data-theme="light"]{--fg:#17141A;--fg2:rgba(23,20,26,0.66);--fg3:rgba(23,20,26,0.48);--glass:rgba(255,252,248,0.6);--card:rgba(255,255,255,0.5);--card2:rgba(255,255,255,0.78);--hover:rgba(23,20,26,0.05);--sel:rgba(23,20,26,0.08);--line:rgba(23,20,26,0.08);--line2:rgba(23,20,26,0.15);--track:rgba(23,20,26,0.1);--solid:#17141A;--solidFg:#FBF8F4;--sheet:rgba(252,249,245,0.86);--tint:rgba(248,243,236,0.58);--hi:rgba(255,255,255,0.9);--shadow:rgba(60,40,30,0.16);--base:#EFE9E1}
+body{margin:0;background:#141016;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}a:hover{color:#E8501C}
+input,select,textarea,button{font:inherit;color:inherit}
+select option{background:#2A242D;color:#F5F2EE}
+input::placeholder,textarea::placeholder{color:var(--fg3)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--line2) !important}
+::selection{background:#FF7A45;color:#141016}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:var(--track);border-radius:10px;border:3px solid transparent;background-clip:padding-box}
+@keyframes slideIn{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
+@keyframes rise{from{transform:translate(-50%,12px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="position:relative;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Geist',sans-serif;font-size:14px;line-height:1.45;color:var(--fg);background:var(--base);transition:background .4s">
+<div style="position:fixed;inset:0;z-index:0;overflow:hidden">
+  <img src="https://hrithick.xyz/assets/art/recognition-1774.webp" alt="" style="width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.06);filter:saturate(1.1)">
+  <sc-if value="{{ customWall }}" hint-placeholder-val="{{ false }}"><img src="{{ wallpaper }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.06);filter:saturate(1.1)"></sc-if>
+  <div style="position:absolute;inset:0;background:var(--tint);transition:background .4s"></div>
+</div>
+
+<div style="position:relative;z-index:1;display:flex;gap:12px;padding:{{ outerPad }};min-height:100vh;box-sizing:border-box">
+
+<sc-if value="{{ showSidebar }}" hint-placeholder-val="{{ true }}">
+<aside style="flex:0 0 {{ sideW }};box-sizing:border-box;position:sticky;top:12px;align-self:flex-start;height:calc(100vh - 24px);overflow:auto;display:flex;flex-direction:column;gap:22px;padding:18px 10px;background:var(--glass);backdrop-filter:blur(40px) saturate(170%);-webkit-backdrop-filter:blur(40px) saturate(170%);border:1px solid var(--line2);border-radius:24px;box-shadow:inset 0 1px 0 var(--hi),0 30px 80px var(--shadow);transition:background .4s">
+  <div style="display:flex;align-items:center;gap:10px;padding:0 6px">
+    <span style="width:32px;height:32px;flex:none;border-radius:10px;background:#E8501C;display:grid;place-items:center;font-weight:700;font-size:14px;color:#141016">H</span>
+    <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span style="display:flex;flex-direction:column;line-height:1.2"><span style="font-weight:600;letter-spacing:-0.01em">Hrithick Studio</span><span style="font-size:12px;color:var(--fg2)">Workspace</span></span></sc-if>
+  </div>
+  <nav style="display:flex;flex-direction:column;gap:2px">
+    <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+      <button onClick="{{ n.go }}" title="{{ n.label }}" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 10px;border:none;border-radius:11px;background:{{ n.bg }};cursor:pointer;text-align:left;color:var(--fg)" style-hover="background:var(--hover)">
+        <span style="display:flex;gap:11px;align-items:center"><span style="width:18px;text-align:center;opacity:0.75;font-size:14px">{{ n.icon }}</span><sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span>{{ n.label }}</span></sc-if></span>
+        <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;padding:1px 7px;border-radius:999px;background:{{ n.badgeBg }};color:{{ n.badgeFg }}">{{ n.badge }}</span></sc-if>
+      </button>
+    </sc-for>
+  </nav>
+  <div style="display:flex;flex-direction:column;gap:2px">
+    <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span style="padding:0 10px 6px;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--fg3)">Active projects</span></sc-if>
+    <sc-for list="{{ sideProjects }}" as="p" hint-placeholder-count="4">
+      <button onClick="{{ p.open }}" title="{{ p.name }}" style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:none;border-radius:11px;background:{{ p.bg }};cursor:pointer;text-align:left;color:var(--fg);min-width:0" style-hover="background:var(--hover)">
+        <span style="width:18px;display:grid;place-items:center;flex:none"><span style="width:9px;height:9px;border-radius:3px;background:{{ p.color }}"></span></span>
+        <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span style="display:flex;flex-direction:column;min-width:0;line-height:1.25"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span><span style="font-size:11px;color:var(--fg3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.client }}</span></span></sc-if>
+      </button>
+    </sc-for>
+  </div>
+  <div style="margin-top:auto;display:flex;flex-direction:column;gap:12px;padding:12px 4px 0;border-top:1px solid var(--line)">
+    <div style="display:flex;flex-direction:{{ toggleDir }};padding:3px;gap:2px;border-radius:999px;background:var(--card);border:1px solid var(--line)">
+      <sc-for list="{{ themeOpts }}" as="t" hint-placeholder-count="2">
+        <button onClick="{{ t.set }}" title="{{ t.label }}" style="flex:1;padding:6px 8px;border:none;border-radius:999px;background:{{ t.bg }};color:var(--fg);cursor:pointer;font-size:12px;display:flex;gap:6px;justify-content:center;align-items:center;box-shadow:{{ t.shadow }}"><span>{{ t.icon }}</span><sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span>{{ t.label }}</span></sc-if></button>
+      </sc-for>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding:0 4px"><span style="width:30px;height:30px;flex:none;border-radius:50%;background:#FF7A45;display:grid;place-items:center;font-size:11px;font-weight:600;color:#141016">HC</span><sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span style="display:flex;flex-direction:column;line-height:1.2"><span>Hrithick Chowdary</span><span style="font-size:11px;color:var(--fg3)">Creative director</span></span></sc-if></div>
+    <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><div style="display:flex;justify-content:space-between;font-size:12px;padding:0 4px"><a href="Hrithick v4.dc.html" style="color:var(--fg2)">Public site ↗</a><button onClick="{{ resetData }}" style="padding:0;border:none;background:none;cursor:pointer;color:var(--fg2)">Reset data</button></div></sc-if>
+  </div>
+</aside>
+</sc-if>
+
+<main style="flex:1 1 auto;min-width:0;box-sizing:border-box;padding:{{ mainPad }};display:flex;flex-direction:column;gap:22px;background:var(--glass);backdrop-filter:blur(40px) saturate(170%);-webkit-backdrop-filter:blur(40px) saturate(170%);border:1px solid var(--line2);border-radius:{{ mainRadius }};box-shadow:inset 0 1px 0 var(--hi),0 30px 80px var(--shadow);transition:background .4s">
+
+  <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:30px;height:30px;border-radius:10px;background:#E8501C;display:grid;place-items:center;font-weight:700;font-size:13px;color:#141016">H</span><span style="font-weight:600">Hrithick Studio</span></div>
+      <button onClick="{{ flipTheme }}" style="width:38px;height:38px;border-radius:50%;border:1px solid var(--line2);background:var(--card);cursor:pointer;font-size:15px">{{ themeIcon }}</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <div data-screen-label="Home" style="display:flex;flex-direction:column;gap:22px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="color:var(--fg2)">Monday, 23 November</span><h1 style="margin:0;font-size:clamp(26px,3vw,40px);font-weight:600;letter-spacing:-0.035em;line-height:1.05">Good evening, Hrithick.</h1></div>
+        <button onClick="{{ openUseTpl }}" style="padding:10px 18px;border-radius:999px;border:none;background:var(--solid);color:var(--solidFg);font-weight:500;cursor:pointer" style-hover="background:#FF7A45;color:#141016">New project from template</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr));gap:10px">
+        <sc-for list="{{ homeStats }}" as="k" hint-placeholder-count="4">
+          <button onClick="{{ k.go }}" style="padding:16px;border-radius:18px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;gap:4px;text-align:left;cursor:pointer;color:var(--fg)" style-hover="background:var(--card2)">
+            <span style="font-size:12px;color:var(--fg2)">{{ k.label }}</span>
+            <span style="font-size:26px;font-weight:600;letter-spacing:-0.03em;color:{{ k.color }}">{{ k.value }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px">
+        <div style="padding:16px;border-radius:20px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;gap:2px;min-width:0">
+          <div style="display:flex;justify-content:space-between;padding:0 4px 8px"><span style="font-weight:600">My week</span><button onClick="{{ goMyTasks }}" style="border:none;background:none;cursor:pointer;color:var(--fg2);font-size:13px">All tasks →</button></div>
+          <sc-for list="{{ weekTasks }}" as="t" hint-placeholder-count="6">
+            <div onClick="{{ t.open }}" style="display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 6px;border-top:1px solid var(--line);cursor:pointer;border-radius:10px" style-hover="background:var(--hover)">
+              <button onClick="{{ t.toggle }}" style="width:18px;height:18px;border-radius:50%;border:1.5px solid {{ t.ring }};background:{{ t.fill }};cursor:pointer;padding:0;font-size:10px;color:#141016">{{ t.tick }}</button>
+              <span style="display:flex;flex-direction:column;min-width:0"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.title }}</span><span style="font-size:12px;color:var(--fg3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.where }}</span></span>
+              <span style="font-size:12px;color:{{ t.dueColor }}">{{ t.dueFmt }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="padding:16px;border-radius:20px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;gap:2px;min-width:0">
+          <span style="font-weight:600;padding:0 4px 8px">Portfolio</span>
+          <sc-for list="{{ portfolio }}" as="p" hint-placeholder-count="5">
+            <button onClick="{{ p.open }}" style="display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:12px;align-items:center;padding:9px 6px;border:none;border-top:1px solid var(--line);background:none;cursor:pointer;text-align:left;color:var(--fg);border-radius:10px" style-hover="background:var(--hover)">
+              <svg width="36" height="36" viewBox="0 0 36 36" style="transform:rotate(-90deg)"><circle cx="18" cy="18" r="15" style="fill:none;stroke:var(--track);stroke-width:3"></circle><circle cx="18" cy="18" r="15" style="fill:none;stroke:{{ p.color }};stroke-width:3;stroke-linecap:round;stroke-dasharray:{{ p.dash }}"></circle></svg>
+              <span style="display:flex;flex-direction:column;min-width:0"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span><span style="font-size:12px;color:var(--fg3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.client }} · {{ p.pctLabel }} · due {{ p.dueFmt }}</span></span>
+              <span style="font-size:12px;padding:3px 9px;border-radius:999px;background:{{ p.stBg }};color:{{ p.stFg }};white-space:nowrap">{{ p.status }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="padding:16px;border-radius:20px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;gap:2px">
+        <span style="font-weight:600;padding:0 4px 8px">Activity</span>
+        <sc-for list="{{ activity }}" as="a" hint-placeholder-count="4">
+          <div onClick="{{ a.open }}" style="display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:12px;align-items:start;padding:10px 6px;border-top:1px solid var(--line);cursor:pointer;border-radius:10px" style-hover="background:var(--hover)">
+            <span style="width:28px;height:28px;border-radius:50%;background:{{ a.av.color }};display:grid;place-items:center;font-size:10px;font-weight:600;color:#141016">{{ a.av.ini }}</span>
+            <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span><span style="font-weight:500">{{ a.av.first }}</span> <span style="color:var(--fg2)">on {{ a.task }}</span></span><span style="color:var(--fg2)">{{ a.text }}</span></span>
+            <span style="font-size:12px;color:var(--fg3)">{{ a.when }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isMyTasks }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="My tasks" style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;flex-direction:column;gap:4px"><span style="color:var(--fg2)">Assigned to you, across every client</span><h1 style="margin:0;font-size:clamp(26px,3vw,34px);font-weight:600;letter-spacing:-0.035em">My tasks</h1></div>
+      <sc-for list="{{ myGroups }}" as="g" hint-placeholder-count="3">
+        <div style="display:flex;flex-direction:column;padding:14px;border-radius:20px;border:1px solid var(--line);background:var(--card)">
+          <div style="display:flex;gap:8px;align-items:baseline;padding:0 6px 8px"><span style="font-weight:600;color:{{ g.color }}">{{ g.name }}</span><span style="font-size:12px;color:var(--fg3)">{{ g.count }}</span></div>
+          <sc-for list="{{ g.tasks }}" as="t" hint-placeholder-count="3">
+            <div onClick="{{ t.open }}" style="display:grid;grid-template-columns:{{ myCols }};gap:12px;align-items:center;padding:10px 6px;border-top:1px solid var(--line);cursor:pointer;border-radius:10px" style-hover="background:var(--hover)">
+              <button onClick="{{ t.toggle }}" style="width:18px;height:18px;border-radius:50%;border:1.5px solid {{ t.ring }};background:{{ t.fill }};cursor:pointer;padding:0;font-size:10px;color:#141016">{{ t.tick }}</button>
+              <span style="display:flex;flex-direction:column;min-width:0"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.title }}</span><span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--fg3);min-width:0"><span style="width:7px;height:7px;border-radius:2px;background:{{ t.color }};flex:none"></span><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.where }}</span></span></span>
+              <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}"><span style="font-size:12px;color:{{ t.prColor }}">{{ t.priority }}</span></sc-if>
+              <span style="font-size:12px;text-align:right;color:{{ t.dueColor }}">{{ t.dueFmt }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isClients }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Clients" style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="color:var(--fg2)">{{ clientCount }} clients · {{ activeCount }} active projects</span><h1 style="margin:0;font-size:clamp(26px,3vw,34px);font-weight:600;letter-spacing:-0.035em">Clients</h1></div>
+        <button onClick="{{ openNewClient }}" style="padding:10px 18px;border-radius:999px;border:1px solid var(--line2);background:var(--card);cursor:pointer" style-hover="background:var(--card2)">New client</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:12px">
+        <sc-for list="{{ clientCards }}" as="c" hint-placeholder-count="5">
+          <button onClick="{{ c.open }}" style="padding:18px;border-radius:20px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;gap:14px;text-align:left;cursor:pointer;color:var(--fg);transition:transform .25s,background .25s" style-hover="background:var(--card2);transform:translateY(-2px)">
+            <div style="display:flex;gap:12px;align-items:center"><span style="width:44px;height:44px;border-radius:14px;background:{{ c.color }};display:grid;place-items:center;font-weight:600;font-size:16px;color:#141016;flex:none">{{ c.initial }}</span><span style="display:flex;flex-direction:column;line-height:1.25;min-width:0"><span style="font-weight:600">{{ c.name }}</span><span style="font-size:12px;color:var(--fg2)">{{ c.company }}</span></span></div>
+            <span style="font-size:12px;color:var(--fg2)">{{ c.service }}</span>
+            <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;font-size:12px"><span>{{ c.projLabel }}</span><span style="color:var(--fg2)">{{ c.pctLabel }}</span></div><div style="height:5px;border-radius:5px;background:var(--track);overflow:hidden"><div style="height:100%;width:{{ c.pctLabel }};background:{{ c.color }};border-radius:5px"></div></div></div>
+            <span style="font-size:12px;color:var(--fg3)">{{ c.next }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isClient }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Client" style="display:flex;flex-direction:column;gap:22px">
+      <div style="display:flex;gap:6px;font-size:13px;color:var(--fg2)"><button onClick="{{ goClients }}" style="padding:0;border:none;background:none;cursor:pointer;color:var(--fg2)">Clients</button><span>/</span><span style="color:var(--fg)">{{ cl.name }}</span></div>
+      <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center">
+        <div style="display:flex;gap:16px;align-items:center"><span style="width:58px;height:58px;border-radius:18px;background:{{ cl.color }};display:grid;place-items:center;font-weight:600;font-size:22px;color:#141016;flex:none">{{ cl.initial }}</span><div style="display:flex;flex-direction:column;gap:2px"><h1 style="margin:0;font-size:clamp(24px,3vw,30px);font-weight:600;letter-spacing:-0.035em;line-height:1.1">{{ cl.name }}</h1><span style="color:var(--fg2)">{{ cl.company }} · {{ cl.service }}</span></div></div>
+        <button onClick="{{ cl.newProject }}" style="padding:10px 18px;border-radius:999px;border:none;background:var(--solid);color:var(--solidFg);font-weight:500;cursor:pointer" style-hover="background:#FF7A45;color:#141016">New project from template</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,130px),1fr));gap:10px">
+        <sc-for list="{{ cl.stats }}" as="k" hint-placeholder-count="4">
+          <div style="padding:14px 16px;border-radius:16px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;color:var(--fg2)">{{ k.label }}</span><span style="font-size:22px;font-weight:600;letter-spacing:-0.02em">{{ k.value }}</span></div>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+          <span style="font-weight:600">Projects</span>
+          <sc-for list="{{ cl.projects }}" as="p" hint-placeholder-count="2">
+            <button onClick="{{ p.open }}" style="padding:16px;border-radius:18px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;gap:12px;text-align:left;cursor:pointer;color:var(--fg)" style-hover="background:var(--card2)">
+              <span style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><span style="display:flex;flex-direction:column"><span style="font-weight:600">{{ p.name }}</span><span style="font-size:12px;color:var(--fg2)">{{ p.template }} · {{ p.range }}</span></span><span style="font-size:12px;padding:3px 9px;border-radius:999px;background:{{ p.stBg }};color:{{ p.stFg }};white-space:nowrap">{{ p.status }}</span></span>
+              <span style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:var(--fg2)">{{ p.doneLabel }}</span><span style="height:5px;border-radius:5px;background:var(--track);overflow:hidden;display:block"><span style="display:block;height:100%;width:{{ p.pctLabel }};background:{{ p.color }}"></span></span></span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="padding:16px;border-radius:18px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;gap:12px;min-width:0">
+          <span style="font-weight:600">Contact</span>
+          <a href="{{ cl.mailto }}" style="color:var(--fg2)">{{ cl.email }}</a>
+          <span style="font-weight:600;padding-top:6px">Invoices</span>
+          <sc-for list="{{ cl.invoices }}" as="i" hint-placeholder-count="2">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding-top:8px;border-top:1px solid var(--line)"><span style="display:flex;flex-direction:column;min-width:0"><span style="font-family:'Geist Mono',monospace;font-size:12px">{{ i.id }} · {{ i.amountFmt }}</span><span style="font-size:12px;color:var(--fg3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ i.desc }}</span></span><span style="font-size:11px;padding:2px 8px;border-radius:999px;background:{{ i.stBg }};color:{{ i.stFg }}">{{ i.st }}</span></div>
+          </sc-for>
+          <label style="display:flex;flex-direction:column;gap:6px;padding-top:6px"><span style="font-weight:600">Notes</span><textarea value="{{ cl.note }}" onChange="{{ cl.setNote }}" rows="4" placeholder="Taste, context, what they're reaching for…" style="padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card);resize:vertical"></textarea></label>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isProject }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Project" style="display:flex;flex-direction:column;gap:18px">
+      <div style="display:flex;gap:6px;font-size:13px;color:var(--fg2);flex-wrap:wrap"><button onClick="{{ goClients }}" style="padding:0;border:none;background:none;cursor:pointer;color:var(--fg2)">Clients</button><span>/</span><button onClick="{{ pj.openClient }}" style="padding:0;border:none;background:none;cursor:pointer;color:var(--fg2)">{{ pj.client }}</button><span>/</span><span style="color:var(--fg)">{{ pj.name }}</span></div>
+      <div style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center">
+        <div style="display:flex;gap:14px;align-items:center;min-width:0">
+          <svg width="52" height="52" viewBox="0 0 36 36" style="transform:rotate(-90deg);flex:none"><circle cx="18" cy="18" r="15" style="fill:none;stroke:var(--track);stroke-width:3"></circle><circle cx="18" cy="18" r="15" style="fill:none;stroke:{{ pj.color }};stroke-width:3;stroke-linecap:round;stroke-dasharray:{{ pj.dash }}"></circle></svg>
+          <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h1 style="margin:0;font-size:clamp(22px,3vw,28px);font-weight:600;letter-spacing:-0.035em;line-height:1.1">{{ pj.name }}</h1><button onClick="{{ pj.flag }}" title="Toggle risk flag" style="font-size:12px;padding:3px 10px;border-radius:999px;border:none;background:{{ pj.stBg }};color:{{ pj.stFg }};cursor:pointer">{{ pj.status }}</button></div>
+            <span style="color:var(--fg2);font-size:13px">{{ pj.pctLabel }} complete · {{ pj.range }} · {{ pj.template }}</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <div style="display:flex;padding-left:6px">
+            <sc-for list="{{ pj.members }}" as="m" hint-placeholder-count="3">
+              <span title="{{ m.name }}" style="width:28px;height:28px;margin-left:-6px;border-radius:50%;background:{{ m.color }};border:2px solid var(--base);display:grid;place-items:center;font-size:10px;font-weight:600;color:#141016">{{ m.ini }}</span>
+            </sc-for>
+          </div>
+          <div style="display:flex;padding:3px;border-radius:999px;background:var(--card);border:1px solid var(--line)">
+            <sc-for list="{{ viewTabs }}" as="v" hint-placeholder-count="3">
+              <button onClick="{{ v.go }}" style="padding:6px 14px;border-radius:999px;border:none;background:{{ v.bg }};color:{{ v.fg }};cursor:pointer;font-size:13px">{{ v.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <sc-if value="{{ isList }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ pj.sections }}" as="s" hint-placeholder-count="4">
+            <div style="display:flex;flex-direction:column;border-radius:16px;background:var(--card);border:1px solid var(--line);overflow:hidden">
+              <button onClick="{{ s.collapse }}" style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border:none;background:none;cursor:pointer;color:var(--fg);text-align:left">
+                <span style="display:flex;gap:10px;align-items:center"><span style="font-size:9px;opacity:0.6;display:inline-block;transform:{{ s.chev }};transition:transform .2s">▶</span><span style="font-weight:600">{{ s.name }}</span></span>
+                <span style="font-size:12px;color:var(--fg3)">{{ s.doneLabel }}</span>
+              </button>
+              <sc-if value="{{ s.open }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;flex-direction:column">
+                  <sc-for list="{{ s.tasks }}" as="t" hint-placeholder-count="3">
+                    <div onClick="{{ t.open }}" style="display:grid;grid-template-columns:{{ listCols }};gap:12px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);cursor:pointer;background:{{ t.bg }}" style-hover="background:var(--hover)">
+                      <button onClick="{{ t.toggle }}" style="width:18px;height:18px;border-radius:50%;border:1.5px solid {{ t.ring }};background:{{ t.fill }};cursor:pointer;padding:0;font-size:10px;color:#141016">{{ t.tick }}</button>
+                      <span style="display:flex;gap:8px;align-items:center;min-width:0"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ t.fg }};text-decoration:{{ t.deco }}">{{ t.title }}</span><span style="font-size:11px;color:var(--fg3);white-space:nowrap">{{ t.meta }}</span></span>
+                      <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}"><span style="display:flex;gap:6px;align-items:center;min-width:0"><span style="width:20px;height:20px;border-radius:50%;background:{{ t.av.color }};display:grid;place-items:center;font-size:8px;font-weight:600;color:#141016;flex:none">{{ t.av.ini }}</span><span style="font-size:12px;color:var(--fg2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.av.first }}</span></span></sc-if>
+                      <span style="font-size:12px;color:{{ t.dueColor }}">{{ t.dueFmt }}</span>
+                      <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}"><span style="font-size:12px;color:{{ t.prColor }}">{{ t.priority }}</span></sc-if>
+                    </div>
+                  </sc-for>
+                  <input onKeyDown="{{ s.addTask }}" placeholder="+ Add task, press Enter" style="margin:0;padding:11px 14px 11px 48px;border:none;border-top:1px solid var(--line);background:transparent;font-size:13px">
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isBoard }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;align-items:flex-start;scroll-snap-type:x mandatory">
+          <sc-for list="{{ pj.sections }}" as="s" hint-placeholder-count="4">
+            <div onDragOver="{{ s.dragOver }}" onDrop="{{ s.drop }}" style="flex:0 0 {{ colW }};scroll-snap-align:start;display:flex;flex-direction:column;gap:8px;padding:10px;border-radius:18px;background:var(--card);border:1px solid var(--line);min-height:160px">
+              <div style="display:flex;justify-content:space-between;padding:2px 4px 4px"><span style="font-weight:600">{{ s.name }}</span><span style="font-size:12px;color:var(--fg3)">{{ s.doneLabel }}</span></div>
+              <sc-for list="{{ s.tasks }}" as="t" hint-placeholder-count="2">
+                <div draggable="true" onDragStart="{{ t.dragStart }}" onClick="{{ t.open }}" style="padding:12px;border-radius:14px;background:var(--card2);border:1px solid var(--line);display:flex;flex-direction:column;gap:10px;cursor:grab;opacity:{{ t.op }};box-shadow:0 6px 18px var(--shadow)" style-hover="border-color:var(--line2)">
+                  <div style="display:flex;gap:8px;align-items:flex-start"><button onClick="{{ t.toggle }}" style="width:16px;height:16px;margin-top:2px;flex:none;border-radius:50%;border:1.5px solid {{ t.ring }};background:{{ t.fill }};cursor:pointer;padding:0;font-size:9px;color:#141016">{{ t.tick }}</button><span style="text-decoration:{{ t.deco }}">{{ t.title }}</span></div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+                    <span style="display:flex;gap:6px;align-items:center"><span style="width:20px;height:20px;border-radius:50%;background:{{ t.av.color }};display:grid;place-items:center;font-size:8px;font-weight:600;color:#141016">{{ t.av.ini }}</span><span style="font-size:11px;padding:2px 7px;border-radius:999px;background:var(--card);color:{{ t.prColor }}">{{ t.priority }}</span></span>
+                    <span style="font-size:11px;color:{{ t.dueColor }}">{{ t.meta }} {{ t.dueFmt }}</span>
+                  </div>
+                </div>
+              </sc-for>
+              <input onKeyDown="{{ s.addTask }}" placeholder="+ Add task" style="padding:9px 10px;border-radius:12px;border:1px dashed var(--line2);background:transparent;font-size:13px">
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isTimeline }}" hint-placeholder-val="{{ false }}">
+        <div style="border-radius:18px;background:var(--card);border:1px solid var(--line);padding:14px;overflow-x:auto">
+          <div style="min-width:620px;display:flex;flex-direction:column">
+            <div style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;padding-bottom:10px">
+              <span></span>
+              <div style="position:relative;height:18px">
+                <sc-for list="{{ tl.ticks }}" as="k" hint-placeholder-count="8"><span style="position:absolute;left:{{ k.left }};font-size:11px;color:var(--fg3);white-space:nowrap">{{ k.label }}</span></sc-for>
+              </div>
+            </div>
+            <sc-for list="{{ tl.rows }}" as="r" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;align-items:center;padding:7px 0;border-top:1px solid var(--line)">
+                <span style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</span>
+                <div style="position:relative;height:26px">
+                  <sc-for list="{{ tl.ticks }}" as="k"><span style="position:absolute;top:-8px;bottom:-8px;left:{{ k.left }};width:1px;background:var(--line)"></span></sc-for>
+                  <div style="position:absolute;top:0;bottom:0;left:{{ r.left }};width:{{ r.width }};border-radius:8px;background:var(--track);overflow:hidden">
+                    <div style="height:100%;width:{{ r.pct }};background:{{ r.color }}"></div>
+                    <span style="position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:600;white-space:nowrap">{{ r.label }}</span>
+                  </div>
+                  <sc-if value="{{ tl.showToday }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:-8px;bottom:-8px;left:{{ tl.today }};width:2px;background:#FF7A45"></span></sc-if>
+                </div>
+              </div>
+            </sc-for>
+            <div style="display:flex;gap:16px;padding-top:12px;font-size:12px;color:var(--fg2)"><span style="display:flex;gap:6px;align-items:center"><span style="width:12px;height:2px;background:#FF7A45"></span>Today</span><span>Bars fill as tasks are completed</span></div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isTemplates }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Templates" style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;flex-direction:column;gap:4px"><span style="color:var(--fg2)">Repeatable engagements, ready to launch for any client</span><h1 style="margin:0;font-size:clamp(26px,3vw,34px);font-weight:600;letter-spacing:-0.035em">Templates</h1></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;align-items:start">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));gap:10px">
+          <sc-for list="{{ tplCards }}" as="t" hint-placeholder-count="5">
+            <button onClick="{{ t.pick }}" style="padding:16px;border-radius:18px;border:1px solid {{ t.bd }};background:{{ t.bg }};display:flex;flex-direction:column;gap:10px;text-align:left;cursor:pointer;color:var(--fg)" style-hover="background:var(--card2)">
+              <span style="width:36px;height:36px;border-radius:11px;background:{{ t.color }};display:grid;place-items:center;font-size:12px;font-weight:700;color:#141016">{{ t.mark }}</span>
+              <span style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:600">{{ t.name }}</span><span style="font-size:12px;color:var(--fg2)">{{ t.service }}</span></span>
+              <span style="font-size:12px;color:var(--fg3)">{{ t.meta }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="padding:20px;border-radius:20px;border:1px solid var(--line2);background:var(--card);display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:19px;font-weight:600;letter-spacing:-0.02em">{{ tp.name }}</span><span style="color:var(--fg2);max-width:44ch">{{ tp.desc }}</span></div>
+            <button onClick="{{ tp.use }}" style="padding:9px 16px;border-radius:999px;border:none;background:var(--solid);color:var(--solidFg);font-weight:500;cursor:pointer" style-hover="background:#FF7A45;color:#141016">Use template</button>
+          </div>
+          <span style="font-size:12px;color:var(--fg3)">{{ tp.meta }}</span>
+          <sc-for list="{{ tp.sections }}" as="s" hint-placeholder-count="4">
+            <div style="display:flex;flex-direction:column;gap:3px;padding-top:10px;border-top:1px solid var(--line)">
+              <span style="font-weight:600;font-size:13px;padding-bottom:4px">{{ s.name }}</span>
+              <sc-for list="{{ s.tasks }}" as="t" hint-placeholder-count="2"><span style="display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--fg2)"><span>○ {{ t.title }}</span><span style="font-size:11px;color:var(--fg3);white-space:nowrap">{{ t.who }} · day {{ t.day }}</span></span></sc-for>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isFinance }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Finance" style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;flex-direction:column;gap:4px"><span style="color:var(--fg2)">Q4 2026</span><h1 style="margin:0;font-size:clamp(26px,3vw,34px);font-weight:600;letter-spacing:-0.035em">Finance &amp; pipeline</h1></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr));gap:10px">
+        <sc-for list="{{ finStats }}" as="k" hint-placeholder-count="4">
+          <div style="padding:16px;border-radius:18px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:var(--fg2)">{{ k.label }}</span><span style="font-size:24px;font-weight:600;letter-spacing:-0.03em;color:{{ k.color }}">{{ k.value }}</span></div>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-weight:600">Pipeline</span>
+        <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;align-items:flex-start">
+          <sc-for list="{{ pipeCols }}" as="col" hint-placeholder-count="4">
+            <div style="flex:1 0 190px;padding:10px;border-radius:16px;background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;padding:0 4px;font-size:13px"><span style="font-weight:600">{{ col.name }}</span><span style="color:var(--fg3);font-family:'Geist Mono',monospace;font-size:12px">{{ col.total }}</span></div>
+              <sc-for list="{{ col.leads }}" as="l" hint-placeholder-count="1">
+                <div style="padding:11px;border-radius:12px;background:var(--card2);border:1px solid var(--line);display:flex;flex-direction:column;gap:6px">
+                  <span style="display:flex;justify-content:space-between;gap:6px"><span style="font-weight:500">{{ l.name }}</span><span style="font-family:'Geist Mono',monospace;font-size:12px">{{ l.valueFmt }}</span></span>
+                  <span style="font-size:12px;color:var(--fg2)">{{ l.service }}</span>
+                  <button onClick="{{ l.adv }}" style="align-self:flex-start;padding:4px 11px;border-radius:999px;border:none;background:{{ l.btnBg }};color:{{ l.btnFg }};cursor:pointer;font-size:12px">{{ l.btn }}</button>
+                </div>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-weight:600">Invoices</span>
+        <div style="border-radius:16px;background:var(--card);border:1px solid var(--line);overflow:hidden">
+          <sc-for list="{{ invRows }}" as="i" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:{{ invCols }};gap:12px;align-items:center;padding:11px 14px;border-top:1px solid var(--line)">
+              <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}"><span style="font-family:'Geist Mono',monospace;font-size:12px">{{ i.id }}</span></sc-if>
+              <span style="display:flex;flex-direction:column;min-width:0"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ i.client }}</span><span style="font-size:12px;color:var(--fg3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ i.desc }}</span></span>
+              <span style="text-align:right;font-family:'Geist Mono',monospace;font-size:12px">{{ i.amountFmt }}</span>
+              <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}"><span style="font-size:12px;color:var(--fg2)">{{ i.dueFmt }}</span></sc-if>
+              <span style="justify-self:start;font-size:11px;padding:2px 8px;border-radius:999px;background:{{ i.stBg }};color:{{ i.stFg }}">{{ i.st }}</span>
+              <span style="display:flex;justify-content:flex-end">
+                <sc-if value="{{ i.canAct }}" hint-placeholder-val="{{ false }}"><button onClick="{{ i.act }}" style="padding:5px 11px;border-radius:999px;border:1px solid var(--line2);background:var(--card2);cursor:pointer;font-size:12px;white-space:nowrap">{{ i.actLabel }}</button></sc-if>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</main>
+</div>
+
+<sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+  <nav style="position:fixed;left:10px;right:10px;bottom:10px;z-index:30;display:flex;justify-content:space-around;padding:8px 6px calc(8px + env(safe-area-inset-bottom));background:var(--sheet);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border:1px solid var(--line2);border-radius:24px;box-shadow:inset 0 1px 0 var(--hi),0 20px 50px var(--shadow)">
+    <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+      <button onClick="{{ n.go }}" style="flex:1;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:none;border-radius:16px;background:{{ n.bg }};cursor:pointer;color:var(--fg);font-size:11px"><span style="font-size:17px;line-height:1">{{ n.icon }}</span>{{ n.short }}</button>
+    </sc-for>
+  </nav>
+</sc-if>
+
+<sc-if value="{{ hasTask }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;top:{{ sheet.top }};right:{{ sheet.right }};bottom:{{ sheet.bottom }};left:{{ sheet.left }};width:{{ sheet.width }};z-index:40;box-sizing:border-box;overflow:auto;padding:20px 20px 32px;display:flex;flex-direction:column;gap:18px;background:var(--sheet);backdrop-filter:blur(50px) saturate(180%);-webkit-backdrop-filter:blur(50px) saturate(180%);border:1px solid var(--line2);border-radius:{{ sheet.radius }};box-shadow:inset 0 1px 0 var(--hi),0 40px 100px var(--shadow);animation:slideIn .28s cubic-bezier(.2,.7,.2,1)">
+    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+      <button onClick="{{ tk.toggle }}" style="padding:7px 13px;border-radius:999px;border:1px solid {{ tk.ring }};background:{{ tk.doneBg }};color:{{ tk.doneFg }};cursor:pointer;font-size:13px">{{ tk.doneLabel }}</button>
+      <div style="display:flex;gap:6px"><button onClick="{{ tk.del }}" style="padding:7px 12px;border-radius:999px;border:none;background:var(--card);cursor:pointer;font-size:12px;color:var(--fg2)" style-hover="color:#E0533F">Delete</button><button onClick="{{ closeTask }}" style="width:32px;height:32px;border-radius:50%;border:none;background:var(--card2);cursor:pointer;font-size:16px">×</button></div>
+    </div>
+    <textarea value="{{ tk.title }}" onChange="{{ tk.setTitle }}" rows="2" style="padding:0;border:none;background:transparent;font-size:22px;font-weight:600;letter-spacing:-0.025em;line-height:1.2;resize:none"></textarea>
+    <span style="font-size:12px;color:var(--fg2);margin-top:-10px">{{ tk.where }}</span>
+    <div style="display:grid;grid-template-columns:86px minmax(0,1fr);gap:10px 12px;align-items:center;font-size:13px">
+      <span style="color:var(--fg2)">Assignee</span>
+      <select value="{{ tk.assignee }}" onChange="{{ tk.setAssignee }}" style="padding:8px 10px;border-radius:11px;border:1px solid var(--line2);background:var(--card)"><sc-for list="{{ memberOpts }}" as="m"><option value="{{ m.id }}">{{ m.name }}</option></sc-for></select>
+      <span style="color:var(--fg2)">Due date</span>
+      <input type="date" value="{{ tk.due }}" onChange="{{ tk.setDue }}" style="padding:8px 10px;border-radius:11px;border:1px solid var(--line2);background:var(--card);color-scheme:{{ theme }}">
+      <span style="color:var(--fg2)">Section</span>
+      <select value="{{ tk.sectionId }}" onChange="{{ tk.setSection }}" style="padding:8px 10px;border-radius:11px;border:1px solid var(--line2);background:var(--card)"><sc-for list="{{ tk.sectionOpts }}" as="s"><option value="{{ s.id }}">{{ s.name }}</option></sc-for></select>
+      <span style="color:var(--fg2)">Priority</span>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <sc-for list="{{ tk.prios }}" as="p" hint-placeholder-count="3"><button onClick="{{ p.set }}" style="padding:5px 12px;border-radius:999px;border:1px solid {{ p.bd }};background:{{ p.bg }};color:{{ p.fg }};cursor:pointer;font-size:12px">{{ p.label }}</button></sc-for>
+      </div>
+    </div>
+    <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--fg2)">Description</span><textarea value="{{ tk.desc }}" onChange="{{ tk.setDesc }}" rows="3" placeholder="Context, references, the standard to hit…" style="padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card);resize:vertical"></textarea></label>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <span style="font-size:13px;color:var(--fg2);padding-bottom:4px">Subtasks {{ tk.subLabel }}</span>
+      <sc-for list="{{ tk.subs }}" as="s" hint-placeholder-count="2">
+        <button onClick="{{ s.toggle }}" style="display:flex;gap:10px;align-items:center;padding:8px 0;border:none;border-top:1px solid var(--line);background:none;cursor:pointer;text-align:left;color:{{ s.fg }}"><span style="width:15px;height:15px;border-radius:4px;border:1.5px solid {{ s.ring }};background:{{ s.fill }};flex:none;font-size:9px;color:#141016;display:grid;place-items:center">{{ s.tick }}</span><span style="text-decoration:{{ s.deco }}">{{ s.t }}</span></button>
+      </sc-for>
+      <input onKeyDown="{{ tk.addSub }}" placeholder="+ Add subtask" style="padding:9px 0;border:none;border-top:1px solid var(--line);background:transparent;font-size:13px">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <span style="font-size:13px;color:var(--fg2)">Comments</span>
+      <sc-for list="{{ tk.comments }}" as="c" hint-placeholder-count="2">
+        <div style="display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px">
+          <span style="width:28px;height:28px;border-radius:50%;background:{{ c.av.color }};display:grid;place-items:center;font-size:10px;font-weight:600;color:#141016">{{ c.av.ini }}</span>
+          <div style="padding:9px 12px;border-radius:4px 14px 14px 14px;background:var(--card2);display:flex;flex-direction:column;gap:2px"><span style="font-size:12px"><span style="font-weight:600">{{ c.av.first }}</span> <span style="color:var(--fg3)">{{ c.when }}</span></span><span>{{ c.text }}</span></div>
+        </div>
+      </sc-for>
+      <input onKeyDown="{{ tk.addComment }}" placeholder="Write a comment, press Enter" style="padding:11px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card)">
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ hasModal }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeModal }}" style="position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:rgba(10,8,12,0.32);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)">
+    <form onClick="{{ stop }}" onSubmit="{{ submitModal }}" style="width:min(100%,460px);box-sizing:border-box;padding:22px;border-radius:26px;display:flex;flex-direction:column;gap:14px;background:var(--sheet);backdrop-filter:blur(50px) saturate(180%);-webkit-backdrop-filter:blur(50px) saturate(180%);border:1px solid var(--line2);box-shadow:inset 0 1px 0 var(--hi),0 40px 100px var(--shadow);color:var(--fg)">
+      <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:18px;font-weight:600;letter-spacing:-0.02em">{{ modalTitle }}</span><button type="button" onClick="{{ closeModal }}" style="width:32px;height:32px;border-radius:50%;border:none;background:var(--card2);cursor:pointer;font-size:16px">×</button></div>
+      <sc-if value="{{ mUseTpl }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--fg2)">Template<select name="tpl" defaultValue="{{ mTpl }}" style="padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card);color:var(--fg)"><sc-for list="{{ tplOpts }}" as="o"><option value="{{ o.id }}">{{ o.name }}</option></sc-for></select></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--fg2)">Client<select name="client" defaultValue="{{ mClient }}" style="padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card);color:var(--fg)"><sc-for list="{{ clientOpts }}" as="o"><option value="{{ o.id }}">{{ o.name }}</option></sc-for></select></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--fg2)">Project name<input name="name" placeholder="Defaults to the template name" style="padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card);color:var(--fg)"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--fg2)">Start date<input name="start" type="date" required="" defaultValue="{{ mStart }}" style="padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card);color:var(--fg);color-scheme:{{ theme }}"></label>
+          <span style="font-size:12px;color:var(--fg3)">Every task is created with an owner and a due date spread across the template's duration.</span>
+        </div>
+      </sc-if>
+      <sc-if value="{{ mClientForm }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <input name="name" required="" placeholder="Name" style="padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card)">
+          <input name="company" placeholder="Company or brand" style="padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card)">
+          <input name="email" type="email" placeholder="Email" style="padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card)">
+          <select name="service" style="padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card)"><sc-for list="{{ serviceOpts }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select>
+          <label style="display:flex;gap:10px;align-items:center;font-size:13px;color:var(--fg2)"><input type="checkbox" name="onboard" defaultChecked="{{ true }}">Start the onboarding template</label>
+        </div>
+      </sc-if>
+      <button type="submit" style="align-self:flex-end;padding:10px 20px;border-radius:999px;border:none;background:var(--solid);color:var(--solidFg);font-weight:500;cursor:pointer" style-hover="background:#FF7A45;color:#141016">{{ modalCta }}</button>
+    </form>
+  </div>
+</sc-if>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;left:50%;bottom:{{ toastBottom }};transform:translateX(-50%);z-index:60;max-width:calc(100% - 32px);padding:11px 18px;border-radius:999px;font-size:13px;background:var(--sheet);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1px solid var(--line2);box-shadow:0 16px 40px var(--shadow);animation:rise .3s cubic-bezier(.2,.7,.2,1)">{{ toast }}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;'dark' | 'light'&quot;,&quot;section&quot;:&quot;Appearance&quot;},&quot;wallpaper&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Recognition&quot;,&quot;People&quot;,&quot;Details&quot;,&quot;Litchi&quot;],&quot;default&quot;:&quot;Recognition&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Appearance&quot;}}">
+const TODAY = '2026-11-23';
+const KEY = 'studioOS.v2';
+const addDays = (d, n) => { const x = new Date(d + 'T00:00:00Z'); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); };
+const diff = (a, b) => Math.round((Date.parse(b + 'T00:00:00Z') - Date.parse(a + 'T00:00:00Z')) / 864e5);
+const dfmt = d => d ? new Date(d + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }) : '';
+const eur = n => '€' + Math.round(n).toLocaleString('en-GB');
+const eurK = n => n >= 1000 ? '€' + (n / 1000).toFixed(n % 1000 ? 1 : 0) + 'K' : eur(n);
+const MEM = {
+  hc: { name: 'Hrithick Chowdary', ini: 'HC', color: '#FF7A45', first: 'Hrithick' },
+  mi: { name: 'Mira Shah · Design', ini: 'MS', color: '#A79BFF', first: 'Mira' },
+  ar: { name: 'Arjun Rao · Production', ini: 'AR', color: '#5FD89F', first: 'Arjun' },
+  le: { name: 'Leah Kim · Strategy', ini: 'LK', color: '#F2C14E', first: 'Leah' },
+};
+const PAL = {
+  dark: { green: '#5FD89F', amber: '#F2C14E', red: '#FF7A6B', blue: '#A9B4FF', mute: 'rgba(245,242,238,0.55)', soft: '#D9D3CB' },
+  light: { green: '#1E8A5A', amber: '#9A6500', red: '#C43D2C', blue: '#4650C4', mute: 'rgba(23,20,26,0.5)', soft: '#4A4550' },
+};
+const CLIENT_COLORS = ['#A79BFF', '#FF7A45', '#5FD89F', '#F2C14E', '#FF9FC0', '#7FD3F7'];
+const SERVICES = ['Personal Institution', 'Concept to Distribution', 'Ghost Founder', 'Art & Creative Direction'];
+const TEMPLATES = [
+  { id: 'pi', name: 'Personal Institution · Architecture', service: 'Personal Institution', weeks: 10, color: '#FF7A45', mark: 'PI', desc: 'The ten connected stages that turn expertise into a coherent public presence.', sections: [
+    ['Onboarding', ['Contract signed', 'Deposit invoice paid', 'Intake questionnaire|le', 'Kickoff call']],
+    ['Vision & Philosophy', ['Ambition workshop', 'Brand philosophy & ideal day|le']],
+    ['Research & Absorption', ['Audience perception interviews|le', 'Competitor & inspiration audit|mi']],
+    ['Positioning & Desire', ['Buyer & desire map|le', 'Positioning statement']],
+    ['Identity & Brand DNA', ['Origin story & narrative|le', 'Voice & message lanes|le']],
+    ['Aesthetic & Sensory', ['Visual direction moodboard|mi', 'Sensory character guide|mi']],
+    ['Presence & Performance', ['Camera & speech audit|ar', 'Coaching sessions']],
+    ['Proximity & Cultural Capital', ['Proximity map', 'Collaborator shortlist']],
+    ['IP & Editorial', ['Idea library|le', 'Pre-production: 12 videos, 40 reels, 24 carousels|ar']],
+    ['Communication & Governance', ['Channel direction|le', 'Publishing SOPs|ar', 'Handover session']],
+  ] },
+  { id: 'cd', name: 'Concept to Distribution · Brand world', service: 'Concept to Distribution', weeks: 12, color: '#A79BFF', mark: 'CD', desc: 'Myth, identity and launch for a product that deserves to be talked about.', sections: [
+    ['Discovery', ['Founder & product immersion', 'Category & desire research|le', 'Six Pillars of Luxury audit|le']],
+    ['Myth & Positioning', ['Myth model|le', 'DNA positioning', 'Naming & narrative|le']],
+    ['Identity', ['Visual language|mi', 'Packaging direction|mi', 'Identity system handoff|mi']],
+    ['Campaign', ['Campaign concept', 'Casting & styling|ar', 'Shoot|ar', 'Edit & grade|ar']],
+    ['Launch', ['Channel plan|le', 'Launch event direction', 'Distribution partners']],
+  ] },
+  { id: 'gf', name: 'Ghost Founder · Venture build', service: 'Ghost Founder', weeks: 8, color: '#5FD89F', mark: 'GF', desc: 'Turn an audience into a business: offer, brand world, team and operations.', sections: [
+    ['Audience study', ['Audience data review|le', 'Community interviews|le']],
+    ['Offer design', ['Venture concept', 'Offer & pricing', 'Unit economics|ar']],
+    ['Brand world', ['Brand world from audience|mi', 'Launch narrative|le']],
+    ['Operations', ['Supplier & partner sourcing|ar', 'Team structure', 'Operating playbook|ar']],
+  ] },
+  { id: 'ad', name: 'Art direction · Campaign shoot', service: 'Art & Creative Direction', weeks: 6, color: '#F2C14E', mark: 'AD', desc: 'One concept carried through casting, set, shoot and delivery.', sections: [
+    ['Concept', ['Creative brief', 'Treatment deck|mi']],
+    ['Pre-production', ['Casting|ar', 'Location & set design|mi', 'Call sheet|ar']],
+    ['Shoot', ['Shoot day', 'Behind the scenes|ar']],
+    ['Post & delivery', ['Selects & retouch|mi', 'Edit|ar', 'Final delivery']],
+  ] },
+  { id: 'ob', name: 'Client onboarding', service: 'Any engagement', weeks: 2, color: '#7FD3F7', mark: 'OB', desc: 'The standard first two weeks with every new client.', sections: [
+    ['Paperwork', ['Contract signed', 'Deposit invoice sent|le', 'Deposit received']],
+    ['Set-up', ['Shared workspace|ar', 'Intake questionnaire|le', 'Brand audit received']],
+    ['Kickoff', ['Kickoff call', 'First-week plan']],
+  ] },
+];
+const tplById = id => TEMPLATES.find(t => t.id === id) || TEMPLATES[0];
+const tplForService = s => TEMPLATES.find(t => t.service === s) || TEMPLATES[0];
+function inst(tpl, clientId, start, frac, id, name, risk) {
+  const total = tpl.sections.reduce((a, s) => a + s[1].length, 0);
+  const sections = tpl.sections.map((s, si) => ({ id: id + 's' + si, name: s[0] }));
+  const tasks = []; let gi = 0;
+  tpl.sections.forEach((s, si) => s[1].forEach(raw => {
+    const [title, who] = raw.split('|');
+    tasks.push({ id: id + 't' + gi, sectionId: id + 's' + si, title, assignee: who || 'hc', due: addDays(start, Math.round((gi + 1) / total * tpl.weeks * 7)), done: gi < Math.floor(total * frac), priority: ['High', 'Medium', 'Low'][(gi + si) % 3], desc: '', subtasks: [], comments: [] });
+    gi++;
+  }));
+  return { id, clientId, name: name || tpl.name.split(' · ').pop(), templateId: tpl.id, start, due: addDays(start, tpl.weeks * 7), risk: !!risk, sections, tasks };
+}
+function seed() {
+  const projects = [
+    inst(tplById('pi'), 'c1', '2026-10-05', 0.62, 'p1', 'Architecture'),
+    inst(tplById('cd'), 'c2', '2026-10-19', 0.36, 'p2', 'Litchi Siciliani · Season 2'),
+    inst(tplById('pi'), 'c3', '2026-11-09', 0.14, 'p3', 'Architecture'),
+    inst(tplById('ad'), 'c4', '2026-09-01', 1, 'p4', 'Monsoon short film'),
+    inst(tplById('gf'), 'c5', '2026-10-12', 0.3, 'p5', 'Venture build', true),
+  ];
+  const enrich = (pi, desc, subs, comments) => { const t = projects[pi].tasks.find(x => !x.done); Object.assign(t, { desc, subtasks: subs.map(([t, done]) => ({ t, done })), comments }); };
+  enrich(0, 'Distil the ambition workshop into one line we can defend in any room.', [['Draft three options', true], ['Review with Aria', false], ['Lock wording', false]], [{ by: 'le', text: 'Option B feels closest to how she actually talks.', at: '2026-11-20' }, { by: 'hc', text: 'Agreed. Let’s pressure-test it on Thursday’s call.', at: '2026-11-21' }]);
+  enrich(1, 'Brief for the "main characters only" sequel. Same world, a bigger table.', [['Reference board', true], ['Shortlist 12 faces', false]], [{ by: 'mi', text: 'Moodboard v2 is in the shared drive.', at: '2026-11-22' }]);
+  enrich(4, '', [['Three supplier quotes', false]], [{ by: 'ar', text: 'Two supplier quotes are late. Flagging the project at risk.', at: '2026-11-19' }]);
+  return {
+    clients: [
+      { id: 'c1', name: 'Aria Mehta', company: 'Lumen Clinics', email: 'aria@lumenclinics.com', service: 'Personal Institution', color: '#A79BFF' },
+      { id: 'c2', name: 'Alankrta Naturals', company: 'Litchi Siciliani', email: 'hello@alankrta.com', service: 'Concept to Distribution', color: '#FF7A45' },
+      { id: 'c3', name: 'Daniel Okafor', company: 'Author & speaker', email: 'daniel@okafor.co', service: 'Personal Institution', color: '#5FD89F' },
+      { id: 'c4', name: 'Studio Vela', company: 'Vela Films', email: 'team@vela.film', service: 'Art & Creative Direction', color: '#F2C14E' },
+      { id: 'c5', name: 'Rhea Kapoor', company: 'Creator, 410K', email: 'rhea@rheakapoor.in', service: 'Ghost Founder', color: '#FF9FC0' },
+    ],
+    projects,
+    invoices: [
+      { id: 'INV-034', clientId: 'c1', desc: 'Architecture · instalment 1 of 2', amount: 2500, due: '2026-10-05', status: 'Paid' },
+      { id: 'INV-035', clientId: 'c5', desc: 'Venture build · retainer Oct', amount: 3000, due: '2026-10-12', status: 'Paid' },
+      { id: 'INV-036', clientId: 'c2', desc: 'Season 2 · phase 1', amount: 6000, due: '2026-11-05', status: 'Paid' },
+      { id: 'INV-037', clientId: 'c5', desc: 'Venture build · retainer Nov', amount: 3000, due: '2026-11-15', status: 'Sent' },
+      { id: 'INV-038', clientId: 'c3', desc: 'Architecture · instalment 1 of 2', amount: 2500, due: '2026-11-30', status: 'Sent' },
+      { id: 'INV-039', clientId: 'c1', desc: 'Architecture · instalment 2 of 2', amount: 2500, due: '2026-12-14', status: 'Draft' },
+    ],
+    leads: [
+      { id: 'l1', name: 'Meera Iyer', service: 'Personal Institution', value: 5000, stage: 'Enquiry' },
+      { id: 'l2', name: 'Tomás Ruiz', service: 'Concept to Distribution', value: 15000, stage: 'Call' },
+      { id: 'l3', name: 'Sana Qureshi', service: 'Ghost Founder', value: 9000, stage: 'Proposal' },
+      { id: 'l4', name: 'Kabir Sethi', service: 'Art & Creative Direction', value: 7000, stage: 'Enquiry' },
+    ],
+    notes: { c1: 'Wants to be the clinician other founders quote. Quiet luxury, not wellness-pastel.' },
+    seq: 100,
+  };
+}
+const WALL = { Recognition: 'https://hrithick.xyz/assets/art/recognition-1774.webp', People: 'https://hrithick.xyz/assets/art/proximity-1122.webp', Details: 'https://hrithick.xyz/assets/art/details-1448.webp', Litchi: 'https://framerusercontent.com/images/vAEMpzHcA47iSeQq3N9IIEDqMkE.jpg' };
+const STAGES = ['Enquiry', 'Call', 'Proposal', 'Won'];
+const W = { Enquiry: 0.1, Call: 0.3, Proposal: 0.6 };
+
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    let data = null, theme = null;
+    try { data = JSON.parse(localStorage.getItem(KEY)); theme = localStorage.getItem(KEY + '.theme'); } catch (e) {}
+    this.state = { data: data || seed(), theme: theme || p.defaultTheme || 'dark', w: typeof window !== 'undefined' ? window.innerWidth : 1280, view: 'home', clientId: 'c1', projectId: 'p1', pview: 'list', task: null, collapsed: {}, tpl: 'pi', modal: null, toast: null };
+  }
+  componentDidMount() {
+    this.onR = () => { const w = document.documentElement.clientWidth || window.innerWidth; if (w && w !== this.state.w) this.setState({ w }); };
+    this.onK = e => { if (e.key === 'Escape') this.setState({ task: null, modal: null }); };
+    window.addEventListener('resize', this.onR); window.addEventListener('keydown', this.onK);
+    if (typeof ResizeObserver !== 'undefined') { this.ro = new ResizeObserver(this.onR); this.ro.observe(document.documentElement); }
+    this.onR(); this.raf = requestAnimationFrame(this.onR); this.t2 = setTimeout(this.onR, 300);
+  }
+  componentWillUnmount() { clearTimeout(this.tt); clearTimeout(this.t2); cancelAnimationFrame(this.raf); this.ro && this.ro.disconnect(); window.removeEventListener('resize', this.onR); window.removeEventListener('keydown', this.onK); }
+  save(fn, toast) {
+    this.setState(s => { const data = fn(JSON.parse(JSON.stringify(s.data))) || s.data; try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {} return { data }; });
+    if (toast) this.flash(toast);
+  }
+  flash(t) { this.setState({ toast: t }); clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: null }), 3000); }
+  setTheme(t) { try { localStorage.setItem(KEY + '.theme', t); } catch (e) {} this.setState({ theme: t }); }
+  updTask(pid, tid, fn) { this.save(d => { const t = d.projects.find(p => p.id === pid).tasks.find(x => x.id === tid); if (t) fn(t); return d; }); }
+  onEnter(fn) { return e => { if (e.key === 'Enter' && e.target.value.trim()) { const v = e.target.value.trim(); e.target.value = ''; e.preventDefault(); fn(v); } }; }
+  renderVals() {
+    const s = this.state, d = s.data, P = PAL[s.theme] || PAL.dark;
+    const vw = s.w || 1280;
+    const bp = vw < 720 ? 'mob' : vw < 1100 ? 'tab' : 'desk';
+    const _unused = s.w < 720 ? 'mob' : s.w < 1100 ? 'tab' : 'desk';
+    const isMobile = bp === 'mob', wide = !isMobile;
+    const ST = { 'On track': P.green, 'At risk': P.amber, 'Off track': P.red, Complete: P.blue };
+    const PR = { High: P.red, Medium: P.amber, Low: P.mute };
+    const INV = { Paid: P.green, Sent: P.soft, Overdue: P.red, Draft: P.mute };
+    const pill = c => ({ bg: c.startsWith('rgba') ? 'var(--card2)' : c + '26', fg: c });
+    const client = id => d.clients.find(c => c.id === id) || { name: '—', color: '#888', company: '' };
+    const info = p => {
+      const total = p.tasks.length, done = p.tasks.filter(t => t.done).length, overdue = p.tasks.filter(t => !t.done && t.due < TODAY).length;
+      const status = total && done === total ? 'Complete' : overdue > 3 ? 'Off track' : (p.risk || overdue > 0) ? 'At risk' : 'On track';
+      const pct = total ? done / total : 0;
+      return { total, done, overdue, status, pct, pctLabel: Math.round(pct * 100) + '%', dash: `${(pct * 94.25).toFixed(1)} 94.25`, stBg: pill(ST[status]).bg, stFg: ST[status] };
+    };
+    const openProject = id => () => this.setState({ view: 'project', projectId: id, task: null });
+    const openClient = id => () => this.setState({ view: 'client', clientId: id, task: null });
+    const openTask = (pid, tid) => () => this.setState({ task: { p: pid, t: tid } });
+    const toggleTask = (pid, t) => e => { if (e && e.stopPropagation) e.stopPropagation(); this.updTask(pid, t.id, x => { x.done = !x.done; }); if (!t.done) this.flash(`Completed · ${t.title}`); };
+    const dueColor = t => t.done ? 'var(--fg3)' : t.due < TODAY ? P.red : t.due === TODAY ? P.amber : 'var(--fg2)';
+    const dueLabel = t => t.due === TODAY ? 'Today' : t.due === addDays(TODAY, 1) ? 'Tomorrow' : dfmt(t.due);
+    const taskVals = (p, t) => {
+      const c = client(p.clientId), m = MEM[t.assignee] || MEM.hc, subDone = t.subtasks.filter(x => x.done).length;
+      return { ...t, open: openTask(p.id, t.id), toggle: toggleTask(p.id, t), ring: t.done ? P.green : 'var(--fg3)', fill: t.done ? P.green : 'transparent', tick: t.done ? '✓' : '',
+        fg: t.done ? 'var(--fg3)' : 'var(--fg)', deco: t.done ? 'line-through' : 'none', op: t.done ? 0.55 : 1, bg: s.task && s.task.t === t.id ? 'var(--sel)' : 'transparent',
+        av: m, dueFmt: dueLabel(t), dueColor: dueColor(t), prColor: PR[t.priority], where: `${p.name} · ${c.name}`, color: c.color,
+        meta: [t.subtasks.length ? `${subDone}/${t.subtasks.length}` : '', t.comments.length ? `${t.comments.length} 💬` : ''].filter(Boolean).join(' · '),
+        dragStart: e => { this.drag = { p: p.id, t: t.id }; try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', t.id); } catch (er) {} } };
+    };
+    const allTasks = d.projects.flatMap(p => p.tasks.map(t => ({ p, t })));
+    const mine = allTasks.filter(x => x.t.assignee === 'hc' && !x.t.done).sort((a, b) => a.t.due < b.t.due ? -1 : 1);
+    const active = d.projects.filter(p => info(p).status !== 'Complete');
+    const weekCount = mine.filter(x => x.t.due <= addDays(TODAY, 7)).length;
+
+    const curView = s.view;
+    const nav = [['home', '⌂', 'Home', 'Home', ''], ['mytasks', '✓', 'My tasks', 'Tasks', weekCount], ['clients', '◎', 'Clients', 'Clients', d.clients.length], ['templates', '▦', 'Templates', 'Templates', TEMPLATES.length], ['finance', '€', 'Finance', 'Finance', '']].map(([k, icon, label, short, badge]) => {
+      const on = curView === k || (k === 'clients' && (curView === 'client' || curView === 'project'));
+      return { icon, label, short, badge: badge === '' ? '' : String(badge), go: () => this.setState({ view: k, task: null }), bg: on ? 'var(--sel)' : 'transparent', badgeBg: badge === '' ? 'transparent' : k === 'mytasks' ? '#FF7A45' : 'var(--card2)', badgeFg: k === 'mytasks' ? '#141016' : 'var(--fg2)' };
+    });
+    const sideProjects = active.map(p => ({ name: p.name, client: client(p.clientId).name, color: client(p.clientId).color, open: openProject(p.id), bg: curView === 'project' && s.projectId === p.id ? 'var(--sel)' : 'transparent' }));
+
+    const invs = d.invoices.map(i => ({ ...i, st: i.status === 'Sent' && i.due < TODAY ? 'Overdue' : i.status }));
+    const outstanding = invs.filter(i => i.st === 'Sent' || i.st === 'Overdue').reduce((a, i) => a + i.amount, 0);
+    const overdueAll = allTasks.filter(x => !x.t.done && x.t.due < TODAY).length;
+    const homeStats = [
+      { label: 'Due this week', value: String(weekCount), color: 'var(--fg)', go: () => this.setState({ view: 'mytasks' }) },
+      { label: 'Overdue tasks', value: String(overdueAll), color: overdueAll ? P.red : 'var(--fg)', go: () => this.setState({ view: 'mytasks' }) },
+      { label: 'Active projects', value: String(active.length), color: 'var(--fg)', go: () => this.setState({ view: 'clients' }) },
+      { label: 'Outstanding', value: eur(outstanding), color: 'var(--fg)', go: () => this.setState({ view: 'finance' }) },
+    ];
+    const weekTasks = mine.slice(0, 7).map(({ p, t }) => taskVals(p, t));
+    const portfolio = d.projects.map(p => { const i = info(p), c = client(p.clientId); return { name: p.name, client: c.name, color: c.color, ...i, dueFmt: dfmt(p.due), open: openProject(p.id) }; }).sort((a, b) => (a.status === 'Complete') - (b.status === 'Complete'));
+    const activity = allTasks.flatMap(({ p, t }) => t.comments.map(c => ({ c, p, t }))).sort((a, b) => a.c.at < b.c.at ? 1 : -1).slice(0, 5)
+      .map(({ c, p, t }) => ({ av: MEM[c.by] || MEM.hc, task: t.title, text: c.text, when: c.at === TODAY ? 'Today' : dfmt(c.at), open: () => this.setState({ view: 'project', projectId: p.id, task: { p: p.id, t: t.id } }) }));
+
+    const groups = [['Overdue', x => x.t.due < TODAY, P.red], ['Today', x => x.t.due === TODAY, P.amber], ['Next 7 days', x => x.t.due > TODAY && x.t.due <= addDays(TODAY, 7), 'var(--fg)'], ['Later', x => x.t.due > addDays(TODAY, 7), 'var(--fg2)']];
+    const myGroups = groups.map(([name, f, color]) => { const ts = mine.filter(f); return { name, color, count: ts.length, tasks: ts.map(({ p, t }) => taskVals(p, t)) }; }).filter(g => g.count);
+
+    const clientCards = d.clients.map(c => {
+      const ps = d.projects.filter(p => p.clientId === c.id), ts = ps.flatMap(p => p.tasks), open = ts.filter(t => !t.done);
+      const nx = open.sort((a, b) => a.due < b.due ? -1 : 1)[0];
+      return { ...c, initial: c.name[0], open: openClient(c.id), projLabel: `${ps.length} project${ps.length === 1 ? '' : 's'} · ${open.length} open tasks`, pctLabel: ts.length ? Math.round((ts.length - open.length) / ts.length * 100) + '%' : '0%', next: nx ? `Next: ${nx.title} · ${dueLabel(nx)}` : 'All caught up' };
+    });
+
+    const cc = client(s.clientId);
+    const cps = d.projects.filter(p => p.clientId === cc.id), cinv = invs.filter(i => i.clientId === cc.id);
+    const cl = { ...cc, initial: (cc.name || '?')[0], mailto: cc.email ? 'mailto:' + cc.email : '#', email: cc.email || 'No email yet', note: d.notes[cc.id] || '',
+      setNote: e => { const v = e.target.value, id = cc.id; this.save(x => { x.notes[id] = v; return x; }); },
+      newProject: () => this.setState({ modal: 'usetpl', mClient: cc.id, mTpl: tplForService(cc.service).id }),
+      stats: [{ label: 'Projects', value: String(cps.length) }, { label: 'Open tasks', value: String(cps.flatMap(p => p.tasks).filter(t => !t.done).length) }, { label: 'Paid', value: eur(cinv.filter(i => i.st === 'Paid').reduce((a, i) => a + i.amount, 0)) }, { label: 'Outstanding', value: eur(cinv.filter(i => i.st === 'Sent' || i.st === 'Overdue').reduce((a, i) => a + i.amount, 0)) }],
+      projects: cps.map(p => { const i = info(p); return { name: p.name, template: tplById(p.templateId).name.split(' · ')[0], range: `${dfmt(p.start)} – ${dfmt(p.due)}`, doneLabel: `${i.done} of ${i.total} tasks`, color: cc.color, ...i, open: openProject(p.id) }; }),
+      invoices: cinv.map(i => ({ ...i, amountFmt: eur(i.amount), stBg: pill(INV[i.st]).bg, stFg: INV[i.st] })) };
+
+    const pr = d.projects.find(p => p.id === s.projectId) || d.projects[0];
+    let pj = {}, tl = { ticks: [], rows: [], showToday: false, today: '0%' };
+    if (pr) {
+      const i = info(pr), pc = client(pr.clientId);
+      const members = [...new Set(pr.tasks.map(t => t.assignee))].map(k => MEM[k] || MEM.hc);
+      pj = { ...i, name: pr.name, client: pc.name, color: pc.color, template: tplById(pr.templateId).name, range: `${dfmt(pr.start)} – ${dfmt(pr.due)}`, members, openClient: openClient(pc.id),
+        flag: () => this.save(x => { const y = x.projects.find(z => z.id === pr.id); y.risk = !y.risk; return x; }, pr.risk ? 'Risk flag cleared.' : 'Project flagged at risk.'),
+        sections: pr.sections.map(sec => {
+          const ts = pr.tasks.filter(t => t.sectionId === sec.id), dn = ts.filter(t => t.done).length, col = !!s.collapsed[sec.id];
+          return { name: sec.name, doneLabel: `${dn}/${ts.length}`, open: !col, chev: col ? 'none' : 'rotate(90deg)',
+            collapse: () => this.setState(st => ({ collapsed: { ...st.collapsed, [sec.id]: !st.collapsed[sec.id] } })),
+            tasks: ts.map(t => taskVals(pr, t)),
+            addTask: this.onEnter(v => this.save(x => { const y = x.projects.find(z => z.id === pr.id); y.tasks.push({ id: 't' + (++x.seq), sectionId: sec.id, title: v, assignee: 'hc', due: addDays(TODAY, 7), done: false, priority: 'Medium', desc: '', subtasks: [], comments: [] }); return x; })),
+            dragOver: e => e.preventDefault(),
+            drop: e => { e.preventDefault(); const dr = this.drag; if (dr && dr.p === pr.id) { this.updTask(pr.id, dr.t, x => { x.sectionId = sec.id; }); } this.drag = null; } };
+        }) };
+      const end = pr.tasks.reduce((m, t) => t.due > m ? t.due : m, pr.due), span = Math.max(7, diff(pr.start, end));
+      const step = span > 100 ? 14 : 7, ticks = [];
+      for (let k = 0; k <= span; k += step) ticks.push({ left: (k / span * 100).toFixed(2) + '%', label: dfmt(addDays(pr.start, k)) });
+      let prev = pr.start;
+      const rows = pr.sections.map(sec => {
+        const ts = pr.tasks.filter(t => t.sectionId === sec.id); if (!ts.length) return null;
+        const sEnd = ts.reduce((m, t) => t.due > m ? t.due : m, ts[0].due), sStart = prev < sEnd ? prev : addDays(sEnd, -3); prev = sEnd;
+        const dn = ts.filter(t => t.done).length;
+        return { name: sec.name, left: (Math.max(0, diff(pr.start, sStart)) / span * 100).toFixed(2) + '%', width: Math.max(3, diff(sStart, sEnd) / span * 100).toFixed(2) + '%', pct: Math.round(dn / ts.length * 100) + '%', label: `${dn}/${ts.length}`, color: pc.color + 'CC' };
+      }).filter(Boolean);
+      const tOff = diff(pr.start, TODAY);
+      tl = { ticks, rows, showToday: tOff >= 0 && tOff <= span, today: (tOff / span * 100).toFixed(2) + '%' };
+    }
+    const viewTabs = ['list', 'board', 'timeline'].map(v => ({ label: v[0].toUpperCase() + v.slice(1), go: () => this.setState({ pview: v }), bg: s.pview === v ? 'var(--solid)' : 'transparent', fg: s.pview === v ? 'var(--solidFg)' : 'var(--fg)' }));
+
+    const tpl = tplById(s.tpl);
+    const tplCards = TEMPLATES.map(t => ({ ...t, meta: `${t.weeks} weeks · ${t.sections.reduce((a, x) => a + x[1].length, 0)} tasks`, pick: () => this.setState({ tpl: t.id }), bg: s.tpl === t.id ? 'var(--card2)' : 'var(--card)', bd: s.tpl === t.id ? 'var(--line2)' : 'var(--line)' }));
+    const tTotal = tpl.sections.reduce((a, x) => a + x[1].length, 0);
+    let gi = 0;
+    const tp = { name: tpl.name, desc: tpl.desc, meta: `${tpl.weeks} weeks · ${tpl.sections.length} sections · ${tTotal} tasks`, use: () => this.setState({ modal: 'usetpl', mTpl: tpl.id, mClient: d.clients[0] && d.clients[0].id }),
+      sections: tpl.sections.map(([name, ts]) => ({ name, tasks: ts.map(raw => { const [title, who] = raw.split('|'); gi++; return { title, who: (MEM[who || 'hc']).first, day: Math.round(gi / tTotal * tpl.weeks * 7) }; }) })) };
+
+    const openLeads = d.leads.filter(l => W[l.stage] != null);
+    const weighted = openLeads.reduce((a, l) => a + l.value * W[l.stage], 0);
+    const finStats = [
+      { label: 'Collected Q4', value: eur(invs.filter(i => i.st === 'Paid' && i.due >= '2026-10-01').reduce((a, i) => a + i.amount, 0)), color: 'var(--fg)' },
+      { label: 'Outstanding', value: eur(outstanding), color: 'var(--fg)' },
+      { label: 'Overdue', value: eur(invs.filter(i => i.st === 'Overdue').reduce((a, i) => a + i.amount, 0)), color: invs.some(i => i.st === 'Overdue') ? P.red : 'var(--fg)' },
+      { label: 'Weighted pipeline', value: eur(weighted), color: 'var(--fg)' },
+    ];
+    const pipeCols = STAGES.map(st => { const ls = d.leads.filter(l => l.stage === st); return { name: st, total: eurK(ls.reduce((a, l) => a + l.value, 0)), leads: ls.map(l => ({ ...l, valueFmt: eurK(l.value),
+      btn: st === 'Won' ? 'Open client' : st === 'Proposal' ? 'Mark won' : 'Advance →', btnBg: st === 'Proposal' ? '#FF7A45' : 'var(--solid)', btnFg: st === 'Proposal' ? '#141016' : 'var(--solidFg)',
+      adv: () => {
+        if (st === 'Won') { if (l.clientId) this.setState({ view: 'client', clientId: l.clientId }); return; }
+        const next = STAGES[STAGES.indexOf(st) + 1];
+        this.save(x => {
+          const y = x.leads.find(z => z.id === l.id); y.stage = next;
+          if (next === 'Won') {
+            const cid = 'c' + (++x.seq), pid = 'p' + (++x.seq);
+            x.clients.push({ id: cid, name: l.name, company: '—', email: '', service: l.service, color: CLIENT_COLORS[x.clients.length % CLIENT_COLORS.length] });
+            x.projects.push(inst(tplForService(l.service), cid, TODAY, 0, pid));
+            x.invoices.push({ id: 'INV-' + (++x.seq), clientId: cid, desc: 'Deposit · 50%', amount: Math.round(l.value / 2), due: addDays(TODAY, 7), status: 'Draft' });
+            y.clientId = cid;
+          }
+          return x;
+        }, next === 'Won' ? `${l.name} won · client, project and deposit invoice created.` : null);
+      } })) }; });
+    const invRows = [...invs].sort((a, b) => a.id < b.id ? 1 : -1).map(i => ({ ...i, client: client(i.clientId).name, amountFmt: eur(i.amount), dueFmt: dfmt(i.due), stBg: pill(INV[i.st]).bg, stFg: INV[i.st],
+      canAct: i.st !== 'Paid', actLabel: i.st === 'Draft' ? 'Send' : 'Mark paid',
+      act: () => this.save(x => { const y = x.invoices.find(z => z.id === i.id); y.status = y.status === 'Draft' ? 'Sent' : 'Paid'; return x; }, i.st === 'Draft' ? `${i.id} sent.` : `${i.id} paid · ${eur(i.amount)}.`) }));
+
+    let tk = {}, hasTask = false;
+    if (s.task) {
+      const tp2 = d.projects.find(p => p.id === s.task.p), t = tp2 && tp2.tasks.find(x => x.id === s.task.t);
+      if (t) {
+        hasTask = true;
+        const up = fn => this.updTask(tp2.id, t.id, fn);
+        tk = { ...t, where: `${tp2.name} · ${client(tp2.clientId).name}`,
+          toggle: () => toggleTask(tp2.id, t)(), doneLabel: t.done ? '✓ Completed' : '○ Mark complete', ring: t.done ? P.green : 'var(--line2)', doneBg: t.done ? pill(P.green).bg : 'transparent', doneFg: t.done ? P.green : 'var(--fg)',
+          setTitle: e => { const v = e.target.value; up(x => { x.title = v; }); }, setDesc: e => { const v = e.target.value; up(x => { x.desc = v; }); },
+          setAssignee: e => { const v = e.target.value; up(x => { x.assignee = v; }); }, setDue: e => { const v = e.target.value; if (v) up(x => { x.due = v; }); }, setSection: e => { const v = e.target.value; up(x => { x.sectionId = v; }); },
+          sectionOpts: tp2.sections,
+          prios: ['High', 'Medium', 'Low'].map(l => ({ label: l, set: () => up(x => { x.priority = l; }), bg: t.priority === l ? pill(PR[l]).bg : 'transparent', fg: PR[l], bd: t.priority === l ? PR[l] : 'var(--line2)' })),
+          subLabel: t.subtasks.length ? `${t.subtasks.filter(x => x.done).length}/${t.subtasks.length}` : '',
+          subs: t.subtasks.map((x, k) => ({ t: x.t, fg: x.done ? 'var(--fg3)' : 'var(--fg)', deco: x.done ? 'line-through' : 'none', ring: x.done ? P.green : 'var(--fg3)', fill: x.done ? P.green : 'transparent', tick: x.done ? '✓' : '', toggle: () => up(y => { y.subtasks[k].done = !y.subtasks[k].done; }) })),
+          addSub: this.onEnter(v => up(x => { x.subtasks.push({ t: v, done: false }); })),
+          comments: t.comments.map(c => ({ ...c, av: MEM[c.by] || MEM.hc, when: c.at === TODAY ? 'Today' : dfmt(c.at) })),
+          addComment: this.onEnter(v => up(x => { x.comments.push({ by: 'hc', text: v, at: TODAY }); })),
+          del: () => { this.save(x => { const y = x.projects.find(z => z.id === tp2.id); y.tasks = y.tasks.filter(z => z.id !== t.id); return x; }, 'Task deleted.'); this.setState({ task: null }); } };
+      }
+    }
+    const sheet = isMobile ? { top: '48px', right: '0px', bottom: '0px', left: '0px', width: 'auto', radius: '26px 26px 0 0' } : { top: '12px', right: '12px', bottom: '12px', left: 'auto', width: 'min(440px, calc(100% - 24px))', radius: '24px' };
+
+    const m = s.modal;
+    const submitModal = e => {
+      e.preventDefault();
+      const f = new FormData(e.target), g = k => (f.get(k) || '').toString().trim();
+      if (m === 'usetpl') {
+        const t = tplById(g('tpl')); let pid;
+        this.save(x => { pid = 'p' + (++x.seq); x.projects.push(inst(t, g('client'), g('start') || TODAY, 0, pid, g('name') || null)); return x; }, `${t.name.split(' · ').pop()} created · ${t.sections.reduce((a, z) => a + z[1].length, 0)} tasks scheduled.`);
+        setTimeout(() => this.setState(st => ({ view: 'project', projectId: st.data.projects[st.data.projects.length - 1].id, pview: 'list' })), 0);
+      }
+      if (m === 'client') {
+        let cid;
+        this.save(x => { cid = 'c' + (++x.seq); x.clients.push({ id: cid, name: g('name'), company: g('company') || '—', email: g('email'), service: g('service'), color: CLIENT_COLORS[x.clients.length % CLIENT_COLORS.length] }); if (f.get('onboard')) x.projects.push(inst(tplById('ob'), cid, TODAY, 0, 'p' + (++x.seq), 'Onboarding')); return x; }, `${g('name')} added.`);
+        setTimeout(() => this.setState({ view: 'client', clientId: cid }), 0);
+      }
+      this.setState({ modal: null });
+    };
+
+    return {
+      customWall: !!this.props.wallpaper && this.props.wallpaper !== 'Recognition' && !!WALL[this.props.wallpaper],
+      theme: s.theme, wallpaper: WALL[this.props.wallpaper] || WALL.Recognition,
+      isMobile, wide, showSidebar: !isMobile, showLabels: bp === 'desk', sideW: bp === 'desk' ? '236px' : '68px', toggleDir: bp === 'desk' ? 'row' : 'column',
+      outerPad: isMobile ? '8px 8px 96px' : '12px', mainPad: isMobile ? '18px 14px 24px' : bp === 'tab' ? '22px 20px 36px' : '24px 30px 40px', mainRadius: isMobile ? '22px' : '24px',
+      listCols: wide ? '24px minmax(0,1fr) 120px 64px 60px' : '24px minmax(0,1fr) 64px', myCols: wide ? '24px minmax(0,1fr) 64px 70px' : '24px minmax(0,1fr) 64px',
+      invCols: wide ? '72px minmax(0,1fr) 80px 64px 76px 96px' : 'minmax(0,1fr) 68px 70px 84px', colW: isMobile ? '82%' : '272px', toastBottom: isMobile ? '100px' : '24px',
+      themeOpts: [['dark', '☾', 'Dark'], ['light', '☀', 'Light']].map(([k, icon, label]) => ({ icon, label, set: () => this.setTheme(k), bg: s.theme === k ? 'var(--card2)' : 'transparent', shadow: s.theme === k ? '0 2px 8px var(--shadow)' : 'none' })),
+      flipTheme: () => this.setTheme(s.theme === 'dark' ? 'light' : 'dark'), themeIcon: s.theme === 'dark' ? '☀' : '☾',
+      nav, sideProjects,
+      isHome: s.view === 'home', isMyTasks: s.view === 'mytasks', isClients: s.view === 'clients', isClient: s.view === 'client', isProject: s.view === 'project', isTemplates: s.view === 'templates', isFinance: s.view === 'finance',
+      homeStats, weekTasks, portfolio, activity, goMyTasks: () => this.setState({ view: 'mytasks' }), myGroups,
+      clientCards, clientCount: d.clients.length, activeCount: active.length, cl, goClients: () => this.setState({ view: 'clients', task: null }),
+      pj, tl, viewTabs, isList: s.pview === 'list', isBoard: s.pview === 'board', isTimeline: s.pview === 'timeline',
+      tplCards, tp, finStats, pipeCols, invRows,
+      hasTask, tk, sheet, closeTask: () => this.setState({ task: null }), memberOpts: Object.entries(MEM).map(([id, v]) => ({ id, name: v.name })),
+      openUseTpl: () => this.setState({ modal: 'usetpl', mTpl: 'pi', mClient: d.clients[0] && d.clients[0].id }), openNewClient: () => this.setState({ modal: 'client' }),
+      hasModal: !!m, closeModal: () => this.setState({ modal: null }), stop: e => e.stopPropagation(), submitModal,
+      modalTitle: m === 'client' ? 'New client' : 'New project from template', modalCta: m === 'client' ? 'Add client' : 'Create project',
+      mUseTpl: m === 'usetpl', mClientForm: m === 'client', mTpl: s.mTpl || 'pi', mClient: s.mClient || '', mStart: TODAY,
+      tplOpts: TEMPLATES.map(t => ({ id: t.id, name: t.name })), clientOpts: d.clients.map(c => ({ id: c.id, name: c.name })), serviceOpts: SERVICES,
+      hasToast: !!s.toast, toast: s.toast,
+      resetData: () => { try { localStorage.removeItem(KEY); } catch (e) {} this.setState({ data: seed(), view: 'home', task: null }); this.flash('Demo data reset.'); },
+    };
+  }
+}
+</script>
+</body>
+</html>
